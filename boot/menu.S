@@ -80,20 +80,22 @@ load_os:
 load_os.1:
     mov si, load_os.entry1
     call print_string
+
+    mov word [boot_header.flags + 4], 0x0000
     jmp load_os.actually_load
 load_os.2:
     mov si, load_os.entry2
     call print_string
+
+    mov word [boot_header.flags + 4], 0x0001
 load_os.actually_load:
     mov si, loading_msg.2
     call print_string
 
     call read_disk
 
-    mov si, success_msg
-    call print_string
-
-    jmp 0x1000:0x0000
+    mov ax, boot_header ; parse it a header
+    jmp 0x1000:0x0000   ; jump to the kernel's address!
 load_os.entry1:
     db "upOS Version 0.1", 0x00
 load_os.entry2:
@@ -132,10 +134,7 @@ select_msg:
 loading_msg.1:
     db "Loading ", '"', 0x00
 loading_msg.2:
-    db '"', "...", 0x00
-
-success_msg:
-    db " SUCCESS!", 0x0D, 0x0A, 0x00
+    db '"', "...", 0x0D, 0x0A, 0x00
 
 fail_msg:
     db " failed.", 0x00
@@ -153,12 +152,20 @@ dap:
     dq 0x00000003   ; LBA (fourth sector, LBA 3)
 
 list.upos.default:
-    db "    upOS Version 0.1                   ", 0x0D, 0x0A, 0x00
+    db "    upOS Version 0.2                   ", 0x0D, 0x0A, 0x00
 list.upos.default.color:
     db 0x70
 list.upos.qemu:
-    db "    upOS Version 0.1 [QEMU serial]     ", 0x0D, 0x0A, 0x00
+    db "    upOS Version 0.2 [QEMU serial]     ", 0x0D, 0x0A, 0x00
 list.upos.qemu.color:
     db 0x07
 list.len:
-    db 38
+    dw 38
+
+boot_header:
+    .magic:
+        dq 0x1BADB002
+    .version:
+        db "0.3     "
+    .flags:
+        dq 0x00000000
