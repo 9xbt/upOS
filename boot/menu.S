@@ -19,9 +19,16 @@ show_list:
     mov si, list.upos.qemu
     call print_string
 
+    mov si, controls_msg
+    call print_string
+
     ret
 
 list_handler:
+    mov ah, 0x01
+    mov cx, 0x2607
+    int 0x10
+
     mov si, version_msg
     call print_string
     mov si, select_msg
@@ -33,15 +40,13 @@ list_handler.loop:
 
     call show_list
 
-    mov ah, 0x00
+    mov ah, 0x00 ; get keystroke
     int 0x16
 
     cmp ah, 0x1C ; return/enter
     je load_os
-
     cmp ah, 0x48 ; up arrow
     je list_handler.arrowkey
-
     cmp ah, 0x50 ; down arrow
     jne list_handler.loop
 list_handler.arrowkey:
@@ -90,9 +95,9 @@ load_os.actually_load:
 
     jmp 0x1000:0x0000
 load_os.entry1:
-    db "upOS Version 0.2", 0x00
+    db "upOS Version 0.1", 0x00
 load_os.entry2:
-    db "upOS Version 0.2 [QEMU serial]", 0x00
+    db "upOS Version 0.1 [QEMU serial]", 0x00
 
 read_disk:
     mov ah, 0x42
@@ -119,13 +124,13 @@ print_string:
     .done: ret
 
 version_msg:
-    db "upOS bootloader v0.2", 0x0D, 0x0A, 0x00
+    db "upOS bootloader v0.3", 0x0D, 0x0A, 0x00
 
 select_msg:
     db 0x0A, "Please select the operating system to start:", 0x0D, 0x0A, 0x0A, 0x00
 
 loading_msg.1:
-    db 0x0A, "Loading ", '"', 0x00
+    db "Loading ", '"', 0x00
 loading_msg.2:
     db '"', "...", 0x00
 
@@ -136,8 +141,8 @@ fail_msg:
     db " failed.", 0x00
 
 controls_msg:
-    db "Use ", 0x18, " and ", 0x19, "to move the highlight to your choice.", 0x0D, 0x0A
-    db "Press enter to choose.", 0x00
+    db 0x0A, "Use ", 0x18, " and ", 0x19, " to move the highlight to your choice.", 0x0D, 0x0A
+    db "Press enter to choose.", 0x0D, 0x0A, 0x0A, 0x00
 
 dap:
     db 0x10         ; size of packet
@@ -148,11 +153,11 @@ dap:
     dq 0x00000003   ; LBA (fourth sector, LBA 3)
 
 list.upos.default:
-    db "    upOS Version 0.2                   ", 0x0D, 0x0A, 0x00
+    db "    upOS Version 0.1                   ", 0x0D, 0x0A, 0x00
 list.upos.default.color:
     db 0x70
 list.upos.qemu:
-    db "    upOS Version 0.2 [QEMU serial]     ", 0x0D, 0x0A, 0x00
+    db "    upOS Version 0.1 [QEMU serial]     ", 0x0D, 0x0A, 0x00
 list.upos.qemu.color:
     db 0x07
 list.len:
