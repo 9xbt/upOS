@@ -10,7 +10,7 @@ BOOT_OBJS := $(addprefix bin/boot/, $(BOOT_SOURCES:.S=.o))
 KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
 # Assembler flags
-ASFLAGS = -f elf32
+ASFLAGS = -f elf32 -Wall
 
 # Output image name
 IMAGE_NAME = upOS
@@ -39,8 +39,8 @@ kernel: $(KERNEL_OBJS)
 
 hdd:
 	dd if=/dev/zero of=bin/$(IMAGE_NAME).hdd bs=512 count=2880
-	dd if=bin/boot.bin of=bin/$(IMAGE_NAME).hdd conv=notrunc bs=512 seek=0 count=1
-	dd if=bin/kernel.bin of=bin/$(IMAGE_NAME).hdd conv=notrunc bs=512 seek=1 count=2048
+	dd if=bin/boot.bin of=bin/$(IMAGE_NAME).hdd conv=notrunc bs=512 seek=0 count=3
+	dd if=bin/kernel.bin of=bin/$(IMAGE_NAME).hdd conv=notrunc bs=512 seek=3 count=2046
 
 clean:
 	rm -f $(BOOT_OBJS) $(KERNEL_OBJS)
