@@ -19,8 +19,7 @@ _start:
     int 0x10
 
     call read_disk
-
-    jmp 0x7E00
+    jmp list_handler
 
 read_disk:
     mov ah, 0x42
