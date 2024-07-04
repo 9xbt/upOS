@@ -97,9 +97,9 @@ load_os.actually_load:
     mov ax, boot_header ; parse it a header
     jmp 0x1000:0x0000   ; jump to the kernel's address!
 load_os.entry1:
-    db "upOS Version 0.1", 0x00
+    db "upOS Version 0.2", 0x00
 load_os.entry2:
-    db "upOS Version 0.1 [QEMU serial]", 0x00
+    db "upOS Version 0.2 [QEMU serial]", 0x00
 
 read_disk:
     mov ah, 0x42
