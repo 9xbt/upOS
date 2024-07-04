@@ -31,14 +31,7 @@ print_string:
 
     .done: ret
 
-; probably not the best idea to have hard-coded version numbers
-; fair enough but will do for now
-; 👍️
-; also didn't you count the first ver as 0.2
-; personally i find 0.1 as the like the proof that the toolchain works and like the first ever test
-; 0.2 is the actual foundation for my programs
-
-boot_msg: db "upOS v0.2", 0x0D, 0x0A, 0x00
+boot_msg: db "upOS bootloader v0.1", 0x0D, 0x0A, 0x00
 
 times 510 - ($ - $$) db 0
 dw 0xAA55
