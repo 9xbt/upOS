@@ -66,43 +66,6 @@ set_color:
     int 0x10
     ret
 
-load_os:
-    mov si, loading_msg.1
-    call print_string
-
-    ; i'm too lazy to have another variable that
-    ; stores the selected option, so i'm just comparing
-    ; the color here..
-    ; also this code here is optimized for only having
-    ; 2 entries, but i don't think we're gonna need more
-    cmp byte [list.upos.default.color], 0x70
-    jne load_os.2
-load_os.1:
-    mov si, load_os.entry1
-    call print_string
-
-    ;mov word [boot_header.flags + 4], 0x0000
-    jmp load_os.actually_load
-load_os.2:
-    mov si, load_os.entry2
-    call print_string
-
-    ;mov word [boot_header.flags + 4], 0x0001
-load_os.actually_load:
-    mov si, loading_msg.2
-    call print_string
-
-    call read_disk
-
-    ;mov ax, version_msg ; parse it the boot header
-    mov ax, 'A'
-    push ax
-    jmp 0x1000:0x0000   ; jump to the kernel's address!
-load_os.entry1:
-    db "upOS Version 0.2", 0x00
-load_os.entry2:
-    db "upOS Version 0.2 [QEMU serial]", 0x00
-
 read_disk:
     mov ah, 0x42
     mov dl, [boot_disk]
@@ -127,6 +90,63 @@ print_string:
 
     .done: ret
 
+load_os:
+    mov si, loading_msg.1
+    call print_string
+
+    cmp byte [list.upos.default.color], 0x70
+    jne load_os.2
+load_os.1:
+    mov si, load_os.entry1
+    call print_string
+
+    ;mov word [boot_header.flags + 4], 0x0000
+    jmp load_os.actually_load
+load_os.2:
+    mov si, load_os.entry2
+    call print_string
+
+    ;mov word [boot_header.flags + 4], 0x0001
+load_os.actually_load:
+    mov si, loading_msg.2
+    call print_string
+
+    call read_disk
+
+    ;mov ax, version_msg ; parse it the boot header
+    ;mov ax, 'A'
+    ;push ax
+    ;jmp 0x1000:0x0000   ; jump to the kernel's address! w-wait not yet. gotta get into pmode because ld hates me
+
+    cli             ; disable interrupts
+
+    in al, 0x92
+    or al, 2
+    out 0x92, al    ; enable the A20 line
+
+    lgdt [gdtr]
+
+    mov eax, cr0
+    or al, 1
+    mov cr0, eax    ; enable protected mode
+
+    jmp 0x08:pmode_main
+
+[BITS 32]
+
+pmode_main:
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+    mov fs, ax
+    mov gs, ax
+
+    mov eax, boot_header
+    jmp 0x10000
+
+[BITS 16]
+
 version_msg:
     db "upOS bootloader v0.3", 0x0D, 0x0A, 0x00
 
@@ -145,14 +165,6 @@ controls_msg:
     db 0x0A, "Use ", 0x18, " and ", 0x19, " to move the highlight to your choice.", 0x0D, 0x0A
     db "Press enter to choose.", 0x0D, 0x0A, 0x0A, 0x00
 
-dap:
-    db 0x10         ; size of packet
-    db 0x00         ; reserved/unused
-    dw 0x0001       ; sectors to read
-    dw 0x0000       ; offset (low 16 bits of the address)
-    dw 0x1000       ; segment (high 16 bits of the address)
-    dq 0x00000003   ; LBA (fourth sector, LBA 3)
-
 list.upos.default:
     db "    upOS Version 0.2                   ", 0x0D, 0x0A, 0x00
 list.upos.default.color:
@@ -164,10 +176,53 @@ list.upos.qemu.color:
 list.len:
     dw 38
 
+load_os.entry1:
+    db "upOS Version 0.2", 0x00
+load_os.entry2:
+    db "upOS Version 0.2 [QEMU serial]", 0x00
+
 boot_header:
     .magic:
         dq 0x1BADB002
     .version:
         db "0.3     "
     .flags:
-        dq 0x0000DEAD
+        dw 0x0000
+
+dap:
+    db 0x10         ; size of packet
+    db 0x00         ; reserved/unused
+    dw 0x0001       ; sectors to read
+    dw 0x0000       ; offset (low 16 bits of the address)
+    dw 0x1000       ; segment (high 16 bits of the address)
+    dq 0x00000003   ; LBA (fourth sector, LBA 3)
+
+gdtr:
+    dw gdt_end - gdt_base - 1
+    dd gdt_base
+
+gdt_base:
+    ; null segment
+    dw 0x0000       ; Limit
+    dw 0x0000       ; Base (low 16 bits)
+    db 0x00         ; Base (mid 8 bits)
+    db 00000000b    ; Access
+    db 00000000b    ; Granularity
+    db 0x00         ; Base (high 8 bits)
+
+    ; 32-bit code
+    dw 0xFFFF       ; Limit
+    dw 0x0000       ; Base (low 16 bits)
+    db 0x00         ; Base (mid 8 bits)
+    db 10011011b    ; Access
+    db 11001111b    ; Granularity
+    db 0x00         ; Base (high 8 bits)
+
+    ; 32-bit data
+    dw 0xFFFF       ; Limit
+    dw 0x0000       ; Base (low 16 bits)
+    db 0x00         ; Base (mid 8 bits)
+    db 10010011b    ; Access
+    db 11001111b    ; Granularity
+    db 0x00         ; Base (high 8 bits)
+gdt_end:
