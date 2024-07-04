@@ -100,23 +100,18 @@ load_os.1:
     mov si, load_os.entry1
     call print_string
 
-    ;mov word [boot_header.flags + 4], 0x0000
+    mov dword [boot_header.flags], 0x00000000
     jmp load_os.actually_load
 load_os.2:
     mov si, load_os.entry2
     call print_string
 
-    ;mov word [boot_header.flags + 4], 0x0001
+    mov dword [boot_header.flags], 0x00000001
 load_os.actually_load:
     mov si, loading_msg.2
     call print_string
 
     call read_disk
-
-    ;mov ax, version_msg ; parse it the boot header
-    ;mov ax, 'A'
-    ;push ax
-    ;jmp 0x1000:0x0000   ; jump to the kernel's address! w-wait not yet. gotta get into pmode because ld hates me
 
     cli             ; disable interrupts
 
@@ -187,7 +182,7 @@ boot_header:
     .version:
         db "0.3     "
     .flags:
-        dw 0x0000
+        dq 0x00000000
 
 dap:
     db 0x10         ; size of packet

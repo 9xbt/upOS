@@ -35,7 +35,7 @@ boot: $(BOOT_OBJS)
 	$(LD) -m elf_i386 -Ttext 0x7C00 --oformat=binary $^ -o bin/boot.bin
 
 kernel: $(KERNEL_OBJS)
-	$(LD) -m elf_i386 -T kernel/linker.ld $^ -o bin/kernel.bin
+	$(LD) -m elf_i386 -Tkernel/linker.ld $^ -o bin/kernel.bin
 
 hdd:
 	dd if=/dev/zero of=bin/$(IMAGE_NAME).hdd bs=512 count=2880
