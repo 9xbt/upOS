@@ -18,7 +18,7 @@ IMAGE_NAME = upOS
 all: dirs boot kernel hdd run
 
 run:
-	qemu-system-i386 -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw
+	qemu-system-i386 -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw | xxd
 
 dirs:
 	mkdir -p bin
