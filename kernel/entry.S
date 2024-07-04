@@ -5,6 +5,6 @@ _start:
     mov al, 'A'
     mov ah, 0xE
     int 10h
-    jmp $
+    jmp 0x10000
 
 ; nothing to see here for now
