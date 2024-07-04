@@ -81,20 +81,22 @@ load_os.1:
     mov si, load_os.entry1
     call print_string
 
-    mov word [boot_header.flags + 4], 0x0000
+    ;mov word [boot_header.flags + 4], 0x0000
     jmp load_os.actually_load
 load_os.2:
     mov si, load_os.entry2
     call print_string
 
-    mov word [boot_header.flags + 4], 0x0001
+    ;mov word [boot_header.flags + 4], 0x0001
 load_os.actually_load:
     mov si, loading_msg.2
     call print_string
 
     call read_disk
 
-    mov ax, boot_header ; parse it a header
+    ;mov ax, version_msg ; parse it the boot header
+    mov ax, 'A'
+    push ax
     jmp 0x1000:0x0000   ; jump to the kernel's address!
 load_os.entry1:
     db "upOS Version 0.2", 0x00
@@ -168,4 +170,4 @@ boot_header:
     .version:
         db "0.3     "
     .flags:
-        dq 0x00000000
+        dq 0x0000DEAD
