@@ -32,13 +32,15 @@ bin/kernel/%.o: kernel/%.S
 	$(AS) $(ASFLAGS) -o $@ $<
 
 boot: $(BOOT_OBJS)
-	$(LD) -m elf_i386 -Ttext 0x7C00 --oformat=binary $^ -o bin/bootsect.bin
+	$(LD) -m elf_i386 -Ttext 0x7C00 --oformat=binary $^ -o bin/boot.bin
 
 kernel: $(KERNEL_OBJS)
 	$(LD) -m elf_i386 -T kernel/linker.ld $^ -o bin/kernel.bin
 
 hdd:
-	cat bin/bootsect.bin bin/kernel.bin > bin/$(IMAGE_NAME).hdd
+	dd if=/dev/zero of=bin/$(IMAGE_NAME).hdd bs=512 count=2880
+	dd if=bin/boot.bin of=bin/$(IMAGE_NAME).hdd conv=notrunc bs=512 seek=0 count=1
+	dd if=bin/kernel.bin of=bin/$(IMAGE_NAME).hdd conv=notrunc bs=512 seek=1 count=2048
 
 clean:
 	rm -f $(BOOT_OBJS) $(KERNEL_OBJS)
