@@ -1,6 +1,6 @@
 [global vga_clear]
-[global vga_putchar]
 [global vga_puts]
+[global vga_putchar]
 
 section .text
 
@@ -10,6 +10,17 @@ vga_clear:
     mov ax, 0x07
     rep stosw
     ret
+
+vga_puts:
+    lodsb
+    or al, al
+    jz .done
+        
+    call vga_putchar
+
+    jmp vga_puts
+
+    .done: ret
 
 vga_putchar:
     xor edi, edi
@@ -34,17 +45,6 @@ vga_putchar:
     mov byte [vga_x], al
 
     ret
-
-vga_puts:
-    lodsb
-    or al, al
-    jz .done
-        
-    call vga_putchar
-
-    jmp vga_puts
-
-    .done: ret
 
 section .data
 

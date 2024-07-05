@@ -18,7 +18,7 @@ IMAGE_NAME = upOS
 all: dirs boot kernel hdd run
 
 run:
-	qemu-system-i386 -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw | xxd
+	qemu-system-i386 -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw
 
 dirs:
 	mkdir -p bin
@@ -29,7 +29,7 @@ bin/boot/%.o: boot/%.S
 
 bin/kernel/%.o: kernel/%.S
 	mkdir -p "$$(dirname $@)"
-	$(AS) $(ASFLAGS) -o $@ $<
+	$(AS) $(ASFLAGS) -I kernel/include -o $@ $<
 
 boot: $(BOOT_OBJS)
 	$(LD) -m elf_i386 -Ttext 0x7C00 --oformat=binary $^ -o bin/boot.bin

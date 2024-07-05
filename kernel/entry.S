@@ -1,9 +1,9 @@
 [BITS 32]
-[extern gdtr]
-[extern vga_clear]
-[extern vga_puts]
-[extern qemu_puts]
-[extern qemu_putchar]
+
+section .text
+
+%include "vga.inc"
+%include "serial.inc"
 
 section .text.prologue
 
@@ -18,27 +18,13 @@ kmain:
 
     call vga_clear
 
-    mov edx, hello_world
-    call qemu_puts
-    
-    ; wtf is that address
-    ; 0x07ecb590
-    ; hmm
-    ; let me try something
+    mov esi, hello_world
+    call vga_puts
     
     jmp $
 
 section .rodata
 hello_world: db "Hello, world!", 0
-
-; yo whats up
-; the sky
-; lmao
-
-; so printing works now?
-; not exactly
-
-;hmmm
 
 section .bss
 
