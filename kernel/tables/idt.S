@@ -59,8 +59,6 @@ isr_handler:
     mov esi, [eax]
     call vga_puts
 
-    ;serial_print "[isr] It's me, the ISR!"
-
     cli
 isr_handler.halt:
     hlt

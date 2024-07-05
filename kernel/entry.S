@@ -46,11 +46,12 @@ kmain.qemudebug:
 kmain.nodebug:
     call idt_install
 
-    mov ecx, 4
-    mov edx, 0
-    div edx
-
-    serial_println "Reached kernel end"
+    vga_println "xxxxxxxxxxxxxxxxxxxx"
+    vga_println "xxxxxxxxxxxxxxxxxxxx"
+    vga_println "xxxxxxxxxxxxxxxxxxxx"
+    vga_println "xxxxxxxxxxxxxxxxxxxx"
+    vga_println "xxxxxxxxxxxxxxxxxxxx"
+    vga_println "xxxxxxxxxxxxxxxxxxxx"
     jmp $
 
 section .data
