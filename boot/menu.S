@@ -35,7 +35,7 @@ list_handler:
     call print_string
 list_handler.loop:
     mov dx, 0x0400 ; x: 0, y: 4
-    mov ah, 0x02
+    mov ax, 0x0200
     int 0x10
 
     call show_list
