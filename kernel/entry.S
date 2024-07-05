@@ -3,6 +3,7 @@
 section .text
 
 %include "vga.inc"
+%include "idt.inc"
 %include "serial.inc"
 
 section .text.prologue
@@ -46,6 +47,13 @@ kmain.goodmagic:
 kmain.qemudebug:
     serial_print "[kernel] booted with debugging"
 kmain.nodebug:
+    call idt_install
+
+    ;mov eax, 4
+    ;mov ebx, 0
+    ;div ebx
+
+    serial_print "[kernel] reached kernel end"
     jmp $
 
 section .data

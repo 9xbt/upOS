@@ -195,7 +195,6 @@ dap:
 gdtr:
     dw gdt_end - gdt_base - 1
     dd gdt_base
-
 gdt_base:
     ; null segment
     dw 0x0000       ; Limit
