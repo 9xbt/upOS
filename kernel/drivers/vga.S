@@ -12,27 +12,43 @@ vga_clear:
     ret
 
 vga_puts:
+    pusha
+vga_puts.loop:
     lodsb
     or al, al
-    jz .done
+    jz vga_puts.done
         
     call vga_putchar
 
-    jmp vga_puts
-
-    .done: ret
+    jmp vga_puts.loop
+vga_puts.done:
+    popa
+    ret
 
 vga_putchar:
-    xor edi, edi
-    xor ebx, ebx
+    cmp al, 0x0A
+    je .newline
 
     push ax
 
-    mov al, [vga_x]
-    mov bl, 2
-    mul bl
+    ; vga_y * 160
+    mov eax, [vga_y]
+    mov ebx, 160
+    mul ebx
+
+    push eax
+
+    ; vga_x * 2
+    mov eax, [vga_x]
+    mov ebx, 2
+    mul ebx
+
+    pop ebx
+
+    ; vga_y * 160 + vga_x * 2
+    add eax, ebx
     
-    mov di, ax
+    mov edi, eax
     pop ax
 
     add edi, 0xB8000
@@ -40,15 +56,17 @@ vga_putchar:
     mov byte [edi], al
     mov byte [edi + 1], 0x07
 
-    mov al, [vga_x]
-    inc al
-    mov byte [vga_x], al
+    inc byte [vga_x]
 
+    ret
+vga_putchar.newline:
+    mov byte [vga_x], 0x00
+    inc byte [vga_y]
     ret
 
 section .data
 
 vga_x:
-    db 0x00
+    dq 0
 vga_y:
-    db 0x00
+    dq 0

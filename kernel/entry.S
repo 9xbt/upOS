@@ -16,15 +16,49 @@ section .text
 kmain:
     mov esp, stack_top
 
+    mov esi, eax
+    mov edi, boot_header
+    mov ecx, boot_header.length
+
+    push ebp
+    mov ebp, esp
+
+    cld
+    rep movsb
+
+    pop ebp
+
+    cmp dword [boot_header.magic], 0x1BADB002
+    je .goodmagic
+kmain.badmagic:
+    mov al, [boot_header.flags]
+    out 0xe9, al
+
+    vga_print "Invalid boot header!", 0x0A, "Cannot continue"
+    jmp $
+kmain.goodmagic:
     call vga_clear
 
-    mov esi, hello_world
-    call vga_puts
-    
+    vga_print "Welcome to upOS!"
+
+    cmp dword [boot_header.flags], 0x00000001
+    jne kmain.nodebug
+kmain.qemudebug:
+    serial_print "[kernel] booted with debugging"
+kmain.nodebug:
     jmp $
 
-section .rodata
-hello_world: db "Hello, world!", 0
+section .data
+
+global boot_header.flags
+boot_header:
+    .magic:
+        dq 0x00000000
+    .version:
+        db "        "
+    .flags:
+        dq 0x00000000
+    .length: equ $ - boot_header
 
 section .bss
 

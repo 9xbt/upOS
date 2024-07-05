@@ -143,7 +143,7 @@ pmode_main:
 [BITS 16]
 
 version_msg:
-    db "upOS bootloader v0.3", 0x0D, 0x0A, 0x00
+    db "upOS bootloader v0.2", 0x0D, 0x0A, 0x00
 
 select_msg:
     db 0x0A, "Please select the operating system to start:", 0x0D, 0x0A, 0x0A, 0x00
@@ -165,22 +165,22 @@ list.upos.default:
 list.upos.default.color:
     db 0x70
 list.upos.qemu:
-    db "    upOS Version 0.2 [QEMU serial]     ", 0x0D, 0x0A, 0x00
+    db "    upOS Version 0.2 [QEMU debugging]  ", 0x0D, 0x0A, 0x00
 list.upos.qemu.color:
     db 0x07
 list.len:
-    dw 38
+    dw 41
 
 load_os.entry1:
     db "upOS Version 0.2", 0x00
 load_os.entry2:
-    db "upOS Version 0.2 [QEMU serial]", 0x00
+    db "upOS Version 0.2 [QEMU debugging]", 0x00
 
 boot_header:
     .magic:
         dq 0x1BADB002
     .version:
-        db "0.3     "
+        db "0.2     "
     .flags:
         dq 0x00000000
 
