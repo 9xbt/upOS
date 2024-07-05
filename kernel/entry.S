@@ -45,7 +45,7 @@ kmain.goodmagic:
     cmp dword [boot_header.flags], 0x00000001
     jne kmain.nodebug
 kmain.qemudebug:
-    serial_print "[kernel] booted with debugging"
+    serial_print "Kernel booted with debugging enabled"
 kmain.nodebug:
     call idt_install
 
@@ -53,7 +53,7 @@ kmain.nodebug:
     mov edx, 0
     div edx
 
-    serial_print "[kernel] reached kernel end"
+    serial_print "Reached kernel end"
     jmp $
 
 section .data

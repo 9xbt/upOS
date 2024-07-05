@@ -1,5 +1,6 @@
 section .text
 
+%include "vga.inc"
 %include "serial.inc"
 
 [global idt_install]
@@ -38,8 +39,14 @@ isr_handler:
     pop ecx
     lea eax, [ecx * 4 + exceptions]
 
+    push eax
+    
+    vga_print "x86 Fault! " ; brb i gotta eat dinner
+
+    pop eax
+
     mov esi, [eax]
-    call serial_puts
+    call vga_puts
 
     ;serial_print "[isr] It's me, the ISR!"
 
