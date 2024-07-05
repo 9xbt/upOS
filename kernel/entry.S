@@ -32,20 +32,17 @@ kmain:
     cmp dword [boot_header.magic], 0x1BADB002
     je .goodmagic
 kmain.badmagic:
-    mov al, [boot_header.flags]
-    out 0xe9, al
-
     vga_print "Invalid boot header!", 0x0A, "Cannot continue"
     jmp $
 kmain.goodmagic:
     call vga_clear
 
-    vga_print "Welcome to upOS!"
+    vga_println "Welcome to upOS!"
 
     cmp dword [boot_header.flags], 0x00000001
     jne kmain.nodebug
 kmain.qemudebug:
-    serial_print "Kernel booted with debugging enabled"
+    serial_println "Kernel booted with debugging enabled"
 kmain.nodebug:
     call idt_install
 
@@ -53,7 +50,7 @@ kmain.nodebug:
     mov edx, 0
     div edx
 
-    serial_print "Reached kernel end"
+    serial_println "Reached kernel end"
     jmp $
 
 section .data

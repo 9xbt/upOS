@@ -8,6 +8,16 @@
 %macro vga_print 1+
     section .rodata
 %%string:
+    db %1, 0x00
+    section .text
+
+    mov esi, %%string
+    call vga_puts
+%endmacro
+
+%macro vga_println 1+
+    section .rodata
+%%string:
     db %1, 0x0A, 0x00
     section .text
 

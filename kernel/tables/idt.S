@@ -21,7 +21,7 @@ idt_install.loop:
 idt_install.end_loop:
     lidt [idtr]
 
-    serial_print "[idt] initialized IDT!"
+    serial_println "[idt] initialized IDT!"
     ret
 
 idt_set_entry:
@@ -41,7 +41,7 @@ isr_handler:
 
     push eax
     
-    vga_print "x86 Fault! " ; brb i gotta eat dinner
+    vga_print "x86 Fault: "
 
     pop eax
 
