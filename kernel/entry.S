@@ -49,9 +49,9 @@ kmain.qemudebug:
 kmain.nodebug:
     call idt_install
 
-    ;mov eax, 4
-    ;mov ebx, 0
-    ;div ebx
+    mov ecx, 4
+    mov edx, 0
+    div edx
 
     serial_print "[kernel] reached kernel end"
     jmp $
