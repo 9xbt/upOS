@@ -10,7 +10,7 @@ BOOT_OBJS := $(addprefix bin/boot/, $(BOOT_SOURCES:.S=.o))
 KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
 # Assembler flags
-ASFLAGS = -f elf32 -Wall
+ASFLAGS = -f elf32 -Wall -g -F dwarf
 
 # Output image name
 IMAGE_NAME = upOS
@@ -35,7 +35,8 @@ boot: $(BOOT_OBJS)
 	$(LD) -m elf_i386 -Ttext 0x7C00 --oformat=binary $^ -o bin/boot.bin
 
 kernel: $(KERNEL_OBJS)
-	$(LD) -m elf_i386 -Tkernel/linker.ld $^ -o bin/kernel.bin
+	$(LD) -m elf_i386 -Tkernel/linker.ld $^ -o bin/kernel.elf
+	objcopy -O binary bin/kernel.elf bin/kernel.bin
 
 hdd:
 	dd if=/dev/zero of=bin/$(IMAGE_NAME).hdd bs=512 count=2880

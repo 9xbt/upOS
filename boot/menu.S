@@ -187,7 +187,7 @@ boot_header:
 dap:
     db 0x10         ; size of packet
     db 0x00         ; reserved/unused
-    dw 0x0001       ; sectors to read
+    dw 0x0040       ; sectors to read
     dw 0x0000       ; offset (low 16 bits of the address)
     dw 0x1000       ; segment (high 16 bits of the address)
     dq 0x00000003   ; LBA (fourth sector, LBA 3)

@@ -1,29 +1,48 @@
 [BITS 32]
+[extern gdtr]
 [extern vga_clear]
 [extern vga_puts]
 [extern qemu_puts]
+[extern qemu_putchar]
 
 section .text.prologue
 
-jmp _start
-
 global _start
 _start:
-    mov esp, 0x1000000
+    jmp kmain
+
+section .text
+
+kmain:
+    mov esp, stack_top
 
     call vga_clear
-    
-    mov esi, [hello_world] ;no brackets for ptr
-    ; if it has no brackets then it throws this error:
-    ; kernel/entry.S:(.text.prologue+0xe): relocation truncated to fit: R_386_16 against `.data'
-    ; use the 32bit ver of si, aka esi
-    ; now it just does not print anything...
-    ;call vga_puts ; ah ; nope still does not work
-    ;wtf
-    
-    call qemu_puts
 
+    mov edx, hello_world
+    call qemu_puts
+    
+    ; wtf is that address
+    ; 0x07ecb590
+    ; hmm
+    ; let me try something
+    
     jmp $
 
-section .data
-hello_world: db "Hello, world!",0
+section .rodata
+hello_world: db "Hello, world!", 0
+
+; yo whats up
+; the sky
+; lmao
+
+; so printing works now?
+; not exactly
+
+;hmmm
+
+section .bss
+
+align 16
+stack_bottom:
+resb 4096
+stack_top:
