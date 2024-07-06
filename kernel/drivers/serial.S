@@ -10,7 +10,6 @@ serial_puts:
     cmp dword [boot_header.flags], 0x00000001
     jne .no
 
-    pusha
 serial_puts.loop:
     lodsb
     or al, al
@@ -20,7 +19,6 @@ serial_puts.loop:
 
     jmp serial_puts.loop
 serial_puts.done:
-    popa
     ret
 serial_puts.no:
     ret

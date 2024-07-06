@@ -82,15 +82,10 @@ irq_handler:
     cmp dword [eax], 0
     je irq_handler.eoi
 
-    mov byte [current_irq], cl
     call [eax]
-    mov cl, [current_irq]
 irq_handler.eoi:
     mov al, cl
     call pic_eoi
-    ;call pic_eoi
-    ;mov al, 0x20
-    ;out 0x20, al
 
     sub esp, 40
     ret

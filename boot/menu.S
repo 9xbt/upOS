@@ -189,11 +189,11 @@ load_os.entry2:
 
 boot_header:
     .magic:
-        dq 0x1BADB002
+        dd 0x1BADB002
     .version:
         db "0.2     "
     .flags:
-        dq 0x00000000
+        dd 0x00000000
 
 dap:
     db 0x10         ; size of packet

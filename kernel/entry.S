@@ -53,14 +53,13 @@ kmain.nodebug:
     call irq_register
 
     vga_println "Did it work?!"
+    jmp $
 kmain.halt:
     hlt
     jmp kmain.halt
 
 test_handler:
-    vga_print "A"
-    mov al, 'A'
-    out 0xe9, al
+    vga_println "Hello"
     in al, 0x60
     ret
 
@@ -69,11 +68,11 @@ section .data
 global boot_header.flags
 boot_header:
     .magic:
-        dq 0x00000000
+        dd 0x00000000
     .version:
         db "        "
     .flags:
-        dq 0x00000000
+        dd 0x00000000
     .length: equ $ - boot_header
 
 section .bss

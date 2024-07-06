@@ -16,17 +16,14 @@ vga_clear:
 ; arguments:
 ;   esi: a pointer to the string
 vga_puts:
-    pushad
-vga_puts.loop:
     lodsb
     or al, al
-    jz vga_puts.done
+    jz .done
         
     call vga_putchar
 
-    jmp vga_puts.loop
+    jmp vga_puts
 vga_puts.done:
-    popad
     ret
 
 ; vga_putchar - Prints a character to the VGA console
