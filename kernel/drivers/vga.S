@@ -1,6 +1,7 @@
 [global vga_clear]
 [global vga_puts]
 [global vga_putchar]
+[global vga_scroll]
 
 section .text
 
@@ -33,6 +34,9 @@ vga_putchar:
     cmp al, 0x0A
     je .newline
 
+    cmp byte [vga_x], 80
+    jge .newline
+
     push ax
 
     ; vga_y * 160
@@ -52,20 +56,41 @@ vga_putchar:
     ; vga_y * 160 + vga_x * 2
     add eax, ebx
     
-    mov edi, eax
+    mov edi, 0xB8000
+    add edi, eax
     pop ax
 
-    add edi, 0xB8000
-
     mov byte [edi], al
-    mov byte [edi + 1], 0x07
+    mov byte [edi + 1], 0x0F
 
-    inc byte [vga_x]
+    inc dword [vga_x]
 
     ret
 vga_putchar.newline:
-    mov byte [vga_x], 0x00
-    inc byte [vga_y]
+    mov dword [vga_x], 0x00
+    inc dword [vga_y]
+
+    cmp dword [vga_y], 25
+    jge vga_scroll
+    ret
+
+; vga_scroll - scrolls the vga framebuffer up
+vga_scroll:
+    push esi
+    mov esi, 0xB80A0
+    mov edi, 0xB8000
+    mov ecx, 3840
+
+    cld
+    rep movsw
+
+    mov ax, 0x0007
+    mov ecx, 80
+    mov edi, 0xB8F00
+    rep stosw
+
+    dec dword [vga_y]
+    pop esi
     ret
 
 section .data

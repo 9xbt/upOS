@@ -52,7 +52,32 @@ kmain.nodebug:
     mov edx, test_handler
     call irq_register
 
+test_label:
     vga_println "Did it work?!"
+    vga_println "a"
+    vga_println "b"
+    vga_println "c"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+    vga_println "d"
+before_scroll:
+    vga_println "d"
     jmp $
 kmain.halt:
     hlt
