@@ -74,6 +74,6 @@ vga_putchar.newline:
 section .data
 
 vga_x:
-    dq 0
+    dd 0
 vga_y:
-    dq 0
+    dd 0
