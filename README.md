@@ -18,4 +18,5 @@ upOS is a 32-bit DOS written completely in assembly.
 - [ ] RTC driver
 - [ ] Keyboard driver
 - [ ] Basic shell
+- [ ] FAT32 filesystem
 - [ ] ELF execution

@@ -34,6 +34,9 @@ vga_putchar:
     cmp al, 0x0A
     je .newline
 
+    cmp al, 0x08
+    je .backspace
+
     cmp byte [vga_x], 80
     jge .newline
 
@@ -72,6 +75,13 @@ vga_putchar.newline:
 
     cmp dword [vga_y], 25
     jge vga_scroll
+    ret
+vga_putchar.backspace:
+    cmp dword [vga_x], 0
+    je .no
+
+    dec dword [vga_x]
+vga_putchar.backspace.no:
     ret
 
 ; vga_scroll - scrolls the vga framebuffer up

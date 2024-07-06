@@ -5,6 +5,7 @@ section .text
 %include "vga.inc"
 %include "idt.inc"
 %include "pic.inc"
+%include "kbd.inc"
 %include "serial.inc"
 
 section .text.prologue
@@ -47,46 +48,12 @@ kmain.qemudebug:
 kmain.nodebug:
     call idt_install
     call pic_install
+    call kbd_install
 
-    mov ecx, 1
-    mov edx, test_handler
-    call irq_register
-
-test_label:
     vga_println "Did it work?!"
-    vga_println "a"
-    vga_println "b"
-    vga_println "c"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-    vga_println "d"
-before_scroll:
-    vga_println "d"
-    jmp $
 kmain.halt:
     hlt
     jmp kmain.halt
-
-test_handler:
-    vga_println "Hello"
-    in al, 0x60
-    ret
 
 section .data
 
