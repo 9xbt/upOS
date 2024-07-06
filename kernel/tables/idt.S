@@ -1,6 +1,7 @@
 section .text
 
 %include "vga.inc"
+%include "pic.inc"
 %include "serial.inc"
 
 [global idt_install]
@@ -35,6 +36,10 @@ irq_register:
     mov dword [eax], edx
     ret
 
+; idt_set_entry - sets an entry in the IDT
+; arguments:
+;   eax: pointer to the entry
+;   ebx: offset
 idt_set_entry:
     mov edx, [ebx]
     mov word [eax], dx
@@ -45,39 +50,47 @@ idt_set_entry:
     mov word [eax + 6], dx
     ret
 
+; isr_handler - handles an interrupt service routine 
 isr_handler:
     pop ecx
     pop ecx
-    lea eax, [ecx * 4 + exceptions]
 
-    push eax
+    cmp ecx, 0xFF
+    je .spurious
+
+    lea eax, [ecx * 4 + exceptions]
     
     vga_print "x86 Fault: "
 
-    pop eax
-
     mov esi, [eax]
     call vga_puts
-
     cli
 isr_handler.halt:
     hlt
     jmp isr_handler.halt
+isr_handler.spurious:
+    ret
 
+; irq_handler - handles IRQ.
 irq_handler:
-    pop ecx
+    ;sub esp, 4
+    add esp, 36
     pop ecx
 
-    sub ecx, 32
-    lea eax, [ecx * 4 + irq_handlers]
-    call eax
+    ;sub ecx, 32
+    ;lea eax, [ecx * 4 + irq_handlers]
+    ;call eax
+
+    serial_print "IRQ!"
+    mov al, cl
+    out 0xe9, al
+
+    mov al, cl
+    call pic_eoi
+irq_handler.retire:
     ret
 
 section .rodata
-
-; what i'm doing here is basically just
-;   char *exception_messages[];
-; but in assembly
 
 exception_1: db "division by zero", 0
 exception_2: db "debug", 0
@@ -182,7 +195,12 @@ isrs:
         push 0
         push %1
 
+        pushad
+
         call irq_handler
+
+        popad
+        sub esp, 4
 
         iret
     %endmacro

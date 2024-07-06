@@ -11,8 +11,10 @@ upOS is a 32-bit DOS written completely in assembly.
 - Fits entirely on a 1.44MB floppy disk
 
 ## Roadmap
-- [X] Serial driver (QEMU debugcon only for now)
+- [X] GDT
 - [X] IDT
+- [ ] PIC
+- [X] Serial driver (QEMU debugcon only for now)
 - [ ] RTC driver
 - [ ] Keyboard driver
 - [ ] Basic shell

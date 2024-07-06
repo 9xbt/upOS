@@ -4,6 +4,7 @@
 
 section .text
 
+; vga_clear - clears the VGA console
 vga_clear:
     mov edi, 0xB8000
     mov ecx, 80 * 25 * 2
@@ -11,6 +12,9 @@ vga_clear:
     rep stosw
     ret
 
+; vga_puts - Prints a string to the VGA console
+; arguments:
+;   esi: a pointer to the string
 vga_puts:
     pusha
 vga_puts.loop:
@@ -25,6 +29,9 @@ vga_puts.done:
     popa
     ret
 
+; vga_putchar - Prints a character to the VGA console
+; arguments:
+;   al: the character to be printed
 vga_putchar:
     cmp al, 0x0A
     je .newline

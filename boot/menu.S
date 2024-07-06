@@ -4,6 +4,7 @@
 
 jmp list_handler
 
+; show_list - shows list.
 show_list:
     mov cx, [list.len]
     mov bl, [list.upos.default.color]
@@ -24,6 +25,7 @@ show_list:
 
     ret
 
+; list_handler - handles key presses, basically the actual loop of the TUI.
 list_handler:
     mov ah, 0x01
     mov cx, 0x2607
@@ -61,11 +63,13 @@ list_handler.2:
     mov byte [list.upos.qemu.color], 0x07
     jmp list_handler.loop
 
+; set_color - sets color.
 set_color:
     mov ah, 0x09
     int 0x10
     ret
 
+; read_disk - reads disk.
 read_disk:
     mov ah, 0x42
     mov dl, [boot_disk]
@@ -78,6 +82,9 @@ read_disk.failed:
     call print_string
     jmp $
 
+; print_string - prints string using BIOS interrupts.
+; arguments:
+;   si - pointer to the string
 print_string:
     lodsb
     or al, al
@@ -90,6 +97,7 @@ print_string:
 
     .done: ret
 
+; load_os - loads os.
 load_os:
     mov si, loading_msg.1
     call print_string
@@ -129,6 +137,7 @@ load_os.actually_load:
 
 [BITS 32]
 
+; pmode_main - first 32-bit protected mode code
 pmode_main:
     mov ax, 0x10
     mov ds, ax

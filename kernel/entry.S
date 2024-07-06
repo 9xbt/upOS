@@ -4,6 +4,7 @@ section .text
 
 %include "vga.inc"
 %include "idt.inc"
+%include "pic.inc"
 %include "serial.inc"
 
 section .text.prologue
@@ -45,13 +46,11 @@ kmain.qemudebug:
     serial_println "Kernel booted with debugging enabled"
 kmain.nodebug:
     call idt_install
+    call pic_install
 
-    vga_println "xxxxxxxxxxxxxxxxxxxx"
-    vga_println "xxxxxxxxxxxxxxxxxxxx"
-    vga_println "xxxxxxxxxxxxxxxxxxxx"
-    vga_println "xxxxxxxxxxxxxxxxxxxx"
-    vga_println "xxxxxxxxxxxxxxxxxxxx"
-    vga_println "xxxxxxxxxxxxxxxxxxxx"
+    ;int 40
+
+    vga_println "Did it work?"
     jmp $
 
 section .data

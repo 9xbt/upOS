@@ -3,6 +3,9 @@
 
 section .text
 
+; serial_puts - Prints a string to the QEMU debugcon (0xE9)
+; arguments:
+;   esi: a pointer to the string
 serial_puts:
     cmp dword [boot_header.flags], 0x00000001
     jne .no

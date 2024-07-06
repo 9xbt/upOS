@@ -5,6 +5,7 @@
 
 jmp 0x0:_start
 
+; _start - basically the first piece of code that is in our control. Loads the rest of the loader.
 _start:
     mov [boot_disk], dl
 
@@ -21,6 +22,7 @@ _start:
     call read_disk
     jmp list_handler
 
+; read_disk - reads disk.
 read_disk:
     mov ah, 0x42
     mov si, dap
