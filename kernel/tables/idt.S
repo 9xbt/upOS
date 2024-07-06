@@ -87,7 +87,8 @@ irq_handler:
 
     mov al, cl
     call pic_eoi
-irq_handler.retire:
+    
+    sub esp, 40
     ret
 
 section .rodata
@@ -174,18 +175,22 @@ isrs:
     %macro isr_no_err_stub 1
     int_stub%+%1:
         push 0
-        push %1
+        push dword %1
 
         call isr_handler
+
+        add esp, 8
 
         iret
     %endmacro
 
     %macro isr_err_stub 1
     int_stub%+%1:
-        push %1
+        push dword %1
 
         call isr_handler
+
+        add esp, 8
 
         iret
     %endmacro
@@ -193,15 +198,16 @@ isrs:
     %macro irq_stub 1
     int_stub%+%1:
         push 0
-        push %1
+        push dword %1
 
         pushad
 
         call irq_handler
 
         popad
-        sub esp, 4
+        add esp, 8
 
+    int_stub%+%1_retire:
         iret
     %endmacro
 

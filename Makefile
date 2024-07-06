@@ -18,7 +18,7 @@ IMAGE_NAME = upOS
 all: dirs boot kernel hdd run
 
 run:
-	qemu-system-i386 -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw -d int -display gtk,zoom-to-fit=on -S -s
+	qemu-system-i386 -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw -d int -display gtk,zoom-to-fit=on
 
 dirs:
 	mkdir -p bin
