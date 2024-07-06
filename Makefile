@@ -9,16 +9,20 @@ KERNEL_SOURCES = $(shell cd kernel && find -L * -type f -name '*.S')
 BOOT_OBJS := $(addprefix bin/boot/, $(BOOT_SOURCES:.S=.o))
 KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
-# Assembler flags
+# Flags
 ASFLAGS = -f elf32 -Wall -g -F dwarf
+QEMUFLAGS = -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw -d int -display gtk,zoom-to-fit=on
 
 # Output image name
 IMAGE_NAME = upOS
 
-all: dirs boot kernel hdd run
+all: dirs boot kernel hdd
 
 run:
-	qemu-system-i386 -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw -d int -display gtk,zoom-to-fit=on
+	qemu-system-i386 $(QEMUFLAGS)
+
+run-gdb:
+	qemu-system-i386 $(QEMUFLAGS) -S -s
 
 dirs:
 	mkdir -p bin
