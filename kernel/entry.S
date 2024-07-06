@@ -48,15 +48,20 @@ kmain.nodebug:
     call idt_install
     call pic_install
 
-    mov ecx, 0
+    mov ecx, 1
     mov edx, test_handler
     call irq_register
 
     vga_println "Did it work?!"
-    jmp $
+kmain.halt:
+    hlt
+    jmp kmain.halt
 
 test_handler:
-    vga_println "Test handler!"
+    vga_print "A"
+    mov al, 'A'
+    out 0xe9, al
+    in al, 0x60
     ret
 
 section .data

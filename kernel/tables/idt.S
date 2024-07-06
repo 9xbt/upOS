@@ -82,10 +82,15 @@ irq_handler:
     cmp dword [eax], 0
     je irq_handler.eoi
 
+    mov byte [current_irq], cl
     call [eax]
+    mov cl, [current_irq]
 irq_handler.eoi:
     mov al, cl
     call pic_eoi
+    ;call pic_eoi
+    ;mov al, 0x20
+    ;out 0x20, al
 
     sub esp, 40
     ret
@@ -169,6 +174,8 @@ idt_base:
 idt_end:
 
 irq_handlers: times 256 dd 0
+
+current_irq: db 0
 
 isrs:
     %macro isr_no_err_stub 1

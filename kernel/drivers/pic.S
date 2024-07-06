@@ -21,8 +21,6 @@ section .text
 %define ICW4_BUF_MASTER 0x0C        ; Buffered mode/master
 %define ICW4_SFNM       0x10        ; Special fully nested (not)
 
-%define PIC_EOI         0x20        ; PIC end of interrupt
-
 [global pic_install]
 [global pic_eoi]
 
@@ -68,18 +66,16 @@ pic_install:
 
 ; pic_eoi - PIC end of interrupt
 ; arguments:
-;   al: interrupt number
+;   cl: interrupt number
 pic_eoi:
-    cmp al, 8
-    jge .pic2
+    mov al, 0x20
+    out 0x20, al
 
-    mov al, PIC_EOI
-    mov dx, PIC1
-    out dx, al
-    ret
+    cmp cl, 32
+    jl .end
+    cmp cl, 40
+    jge .end
+    out 0xA0, al
 
-pic_eoi.pic2:
-    mov al, PIC_EOI
-    mov dx, PIC2
-    out dx, al
+.end:
     ret

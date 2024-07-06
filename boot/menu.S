@@ -42,8 +42,10 @@ list_handler.loop:
 
     call show_list
 
-    mov ah, 0x00 ; get keystroke
-    int 0x16
+    ;mov ah, 0x00 ; get keystroke
+    ;int 0x16
+
+    mov ah, 0x1C
 
     cmp ah, 0x1C ; return/enter
     je load_os
@@ -172,11 +174,11 @@ controls_msg:
 list.upos.default:
     db "    upOS Version 0.2                   ", 0x0D, 0x0A, 0x00
 list.upos.default.color:
-    db 0x70
+    db 0x07
 list.upos.qemu:
     db "    upOS Version 0.2 [QEMU debugging]  ", 0x0D, 0x0A, 0x00
 list.upos.qemu.color:
-    db 0x07
+    db 0x70
 list.len:
     dw 41
 
