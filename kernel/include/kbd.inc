@@ -2,5 +2,6 @@
 %define __KBD_INC
 
 [extern kbd_install]
+[extern kbd_get_string]
 
 %endif

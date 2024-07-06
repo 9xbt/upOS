@@ -50,10 +50,10 @@ kmain.nodebug:
     call pic_install
     call kbd_install
 
-    vga_println "Did it work?!"
-kmain.halt:
-    hlt
-    jmp kmain.halt
+kmain.loop:
+    vga_print "> "
+    call kbd_get_string
+    jmp kmain.loop
 
 section .data
 

@@ -4,12 +4,37 @@ section .text
 %include "vga.inc"
 
 [global kbd_install]
+[global kbd_get_string]
 
 ; kbd_install - sets up the PS/2 keyboard driver
 kbd_install:
     mov ecx, 1
     mov edx, kbd_handler
     call irq_register
+    ret
+
+kbd_get_string:
+    xor al, al
+    mov ecx, 4
+    mov edi, kbd_buffer
+
+    cld
+    rep stosb
+kbd_get_string.loop:
+    mov al, [kbd_char]
+    cmp al, 0
+    je .repeat
+    
+    cmp al, 0x0A
+    je kbd_get_string.return
+
+    call vga_putchar
+kbd_get_string.loop.repeat:
+    mov byte [kbd_char], 0
+    jmp kbd_get_string.loop
+kbd_get_string.return:
+    vga_print 0x0A
+    mov byte[kbd_char], 0
     ret
 
 ; kbd_handler - handles keyboard interrupts
@@ -36,7 +61,6 @@ kbd_handler:
     ; caps lock
     cmp al, 0x3a
     je kbd_handler.caps
-
 kbd_handler.char:
     cmp byte [kbd_shift], 1
     je .shift
@@ -56,8 +80,10 @@ kbd_handler.char.nothing:
 kbd_handler.char.print:
     add ebx, eax
     mov al, [ebx]
-    call vga_putchar
+    mov [kbd_char], al
     ret
+    ;call vga_putchar
+    ;ret
 kbd_handler.release:
     ; shift up
     cmp al, 0xaa
@@ -68,6 +94,8 @@ kbd_handler.release:
     ; control up
     cmp al, 0x9d
     je kbd_handler.ctrl_rel
+
+    mov byte [kbd_char], 0
     ret
 kbd_handler.shift_rel:
     mov byte [kbd_shift], 0
@@ -118,8 +146,6 @@ kbd_map_keys_caps:
 
 section .data
 
-kbd_key_pressed:
-    db 0
 kbd_char:
     db 0
 kbd_caps:
@@ -128,3 +154,5 @@ kbd_ctrl:
     db 0
 kbd_shift:
     db 0
+kbd_buffer:
+    times 64 db 0
