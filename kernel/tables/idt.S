@@ -32,6 +32,7 @@ idt_install.end_loop:
 ;    ecx: interrupt vector
 ;    edx: interrupt handler
 irq_register:
+    add ecx, 32
     lea eax, [ecx * 4 + irq_handlers]
     mov dword [eax], edx
     ret
@@ -73,21 +74,19 @@ isr_handler.spurious:
 
 ; irq_handler - handles IRQ.
 irq_handler:
-    ;sub esp, 4
     add esp, 36
     pop ecx
 
-    ;sub ecx, 32
-    ;lea eax, [ecx * 4 + irq_handlers]
-    ;call eax
+    lea eax, [ecx * 4 + irq_handlers]
 
-    serial_print "IRQ!"
-    mov al, cl
-    out 0xe9, al
+    cmp dword [eax], 0
+    je irq_handler.eoi
 
+    call [eax]
+irq_handler.eoi:
     mov al, cl
     call pic_eoi
-    
+
     sub esp, 40
     ret
 

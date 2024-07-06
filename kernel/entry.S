@@ -48,10 +48,16 @@ kmain.nodebug:
     call idt_install
     call pic_install
 
-    ;int 40
+    mov ecx, 0
+    mov edx, test_handler
+    call irq_register
 
-    vga_println "Did it work?"
+    vga_println "Did it work?!"
     jmp $
+
+test_handler:
+    vga_println "Test handler!"
+    ret
 
 section .data
 

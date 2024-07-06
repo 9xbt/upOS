@@ -2,5 +2,6 @@
 %define __IDT_INC
 
 [extern idt_install]
+[extern irq_register]
 
 %endif
