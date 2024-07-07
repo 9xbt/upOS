@@ -11,5 +11,5 @@ The bootloader uses its own simple boot protocol. Here's how the boot header loo
 | Version | 4 bytes | 0x4    | Boot header version. Should be 0.2.             |
 | Flags   | 4 bytes | 0x8    | Boot flags.                                     |
 
-> [!IMPORTANT]
+> [!INFO]
 > The boot header *will* be expanded in the future, but we'll try to not break compatibility with older versions
