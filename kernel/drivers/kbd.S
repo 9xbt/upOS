@@ -2,6 +2,7 @@ section .text
 
 %include "idt.inc"
 %include "vga.inc"
+%include "serial.inc"
 
 [global kbd_install]
 [global kbd_get_string]
@@ -11,6 +12,8 @@ kbd_install:
     mov ecx, 1
     mov edx, kbd_handler
     call irq_register
+
+    serial_println "kbd_install: initialized keyboard driver"
     ret
 
 kbd_get_string:

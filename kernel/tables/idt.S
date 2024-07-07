@@ -24,7 +24,7 @@ idt_install.loop:
 idt_install.end_loop:
     lidt [idtr]
 
-    serial_println "[idt] initialized IDT!"
+    serial_println "idt_install: initialized IDT"
     ret
 
 ; irq_register - registers an irq

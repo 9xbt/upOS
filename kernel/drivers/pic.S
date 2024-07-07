@@ -61,7 +61,7 @@ pic_install:
 
     sti                 ; Enable interrupts
 
-    serial_println "[pic] pic initialized"
+    serial_println "pic_install: initialized PIC"
     ret
 
 ; pic_eoi - PIC end of interrupt
