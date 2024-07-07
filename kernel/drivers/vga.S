@@ -136,6 +136,17 @@ vga_enable_cursor:
 
     ret
 
+; vga_disable_cursor - disables the vga text mode cursor
+vga_disable_cursor:
+    mov dx, 0x3D4
+    mov al, 0x0A
+    out dx, al
+    mov dx, 0x3D5
+    mov al, 0x20
+    out dx, al
+
+    ret
+
 ; vga_update_cursor - updates the vga cursor position
 vga_update_cursor:
 ; input bx = x, ax = y
