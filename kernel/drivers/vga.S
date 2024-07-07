@@ -3,6 +3,8 @@
 [global vga_putchar]
 [global vga_scroll]
 [global vga_enable_cursor]
+[global vga_x]
+[global vga_y]
 
 section .text
 

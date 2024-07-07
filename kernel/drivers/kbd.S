@@ -18,11 +18,13 @@ kbd_install:
 
 kbd_get_string:
     xor al, al
-    mov ecx, 4
+    mov ecx, 64
     mov edi, kbd_buffer
 
     cld
     rep stosb
+
+    mov byte [kbd_current_idx], 0
 kbd_get_string.loop:
     mov al, [kbd_char]
     cmp al, 0
@@ -31,6 +33,13 @@ kbd_get_string.loop:
     cmp al, 0x0A
     je kbd_get_string.return
 
+    cmp al, 0x08
+    je kbd_get_string.backspace
+
+    cmp byte [kbd_current_idx], 64
+    jge .repeat
+
+    inc byte [kbd_current_idx]
     call vga_putchar
 kbd_get_string.loop.repeat:
     mov byte [kbd_char], 0
@@ -39,6 +48,14 @@ kbd_get_string.return:
     vga_print 0x0A
     mov byte[kbd_char], 0
     ret
+kbd_get_string.backspace:
+    cmp byte [kbd_current_idx], 0
+    je .no
+
+    dec byte [kbd_current_idx]
+    vga_print 0x08, 0x20, 0x08
+kbd_get_string.backspace.no:
+    jmp kbd_get_string.loop.repeat
 
 ; kbd_handler - handles keyboard interrupts
 kbd_handler:
@@ -159,3 +176,6 @@ kbd_shift:
     db 0
 kbd_buffer:
     times 64 db 0
+; kbd_current_idx - current position of kdb_get_string in the buffer
+kbd_current_idx:
+    db 0
