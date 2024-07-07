@@ -111,7 +111,7 @@ vga_scroll:
     cld
     rep movsw
 
-    mov ax, 0x0007
+    mov ax, 0x0700
     mov ecx, 80
     mov edi, 0xB8F00
     rep stosw
