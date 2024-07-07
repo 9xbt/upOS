@@ -36,6 +36,9 @@ kbd_get_string.loop:
     cmp al, 0x08
     je kbd_get_string.backspace
 
+    cmp al, 0x09
+    je kbd_get_string.tab
+
     cmp byte [kbd_current_idx], 64
     jge .repeat
 
@@ -55,6 +58,10 @@ kbd_get_string.backspace:
     dec byte [kbd_current_idx]
     vga_print 0x08, 0x20, 0x08
 kbd_get_string.backspace.no:
+    jmp kbd_get_string.loop.repeat
+kbd_get_string.tab:
+    vga_print 0x09
+    add byte [kbd_current_idx], 4
     jmp kbd_get_string.loop.repeat
 
 ; kbd_handler - handles keyboard interrupts

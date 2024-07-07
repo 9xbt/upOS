@@ -40,6 +40,9 @@ vga_putchar:
     cmp al, 0x08
     je .backspace
 
+    cmp al, 0x09
+    je .tab
+
     cmp byte [vga_x], 80
     jge .newline
 
@@ -88,6 +91,14 @@ vga_putchar.backspace:
     dec dword [vga_x]
     call vga_update_cursor
 vga_putchar.backspace.no:
+    ret
+vga_putchar.tab:
+    push esi
+
+    mov esi, vga_tab
+    call vga_puts
+
+    pop esi
     ret
 
 ; vga_scroll - scrolls the vga framebuffer up
@@ -182,3 +193,5 @@ vga_x:
     dd 0
 vga_y:
     dd 0
+vga_tab:
+    db "    ", 0
