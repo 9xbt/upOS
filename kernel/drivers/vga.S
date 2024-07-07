@@ -2,6 +2,7 @@
 [global vga_puts]
 [global vga_putchar]
 [global vga_scroll]
+[global vga_enable_cursor]
 
 section .text
 
@@ -101,6 +102,34 @@ vga_scroll:
 
     dec dword [vga_y]
     pop esi
+    ret
+
+; vga_enable_cursor - enables the vga text mode cursor
+vga_enable_cursor:
+    ; outb(0x3D4, 0x0A);
+    mov dx, 0x3D4
+    mov al, 0x0A
+    out dx, al
+
+    ; outb(0x3D5, (inb(0x3D5) & 0xC0) | 14);
+    mov dx, 0x3D5
+    in al, dx
+    and al, 0xC0
+    or al, 14
+    out dx, al
+
+    ; outb(0x3D4, 0x0B);
+    mov dx, 0x3D4
+    mov al, 0x0B
+    out dx, al
+
+    ; outb(0x3D5, (inb(0x3D5) & 0xE0) | 15);
+    mov dx, 0x3D5
+    in al, dx
+    and al, 0xE0
+    or al, 15
+    out dx, al
+
     ret
 
 section .data

@@ -49,6 +49,7 @@ kmain.nodebug:
     call idt_install
     call pic_install
     call kbd_install
+    call vga_enable_cursor
 
 kmain.loop:
     vga_print "> "

@@ -5,6 +5,7 @@
 [extern vga_puts]
 [extern vga_putchar]
 [extern vga_scroll]
+[extern vga_enable_cursor]
 
 %macro vga_print 1+
     section .rodata

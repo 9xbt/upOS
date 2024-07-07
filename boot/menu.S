@@ -27,9 +27,13 @@ show_list:
 
 ; list_handler - handles key presses, basically the actual loop of the TUI.
 list_handler:
-    mov ah, 0x01
-    mov cx, 0x2607
-    int 0x10
+    ; disable the cursor
+    mov dx, 0x3D4
+    mov al, 0x0A
+    out dx, al
+    mov dx, 0x3D5
+    mov al, 0x20
+    out dx, al
 
     mov si, version_msg
     call print_string
@@ -42,10 +46,8 @@ list_handler.loop:
 
     call show_list
 
-    ;mov ah, 0x00 ; get keystroke
-    ;int 0x16
-
-    mov ah, 0x1C
+    mov ah, 0x00 ; get keystroke
+    int 0x16
 
     cmp ah, 0x1C ; return/enter
     je load_os
@@ -174,11 +176,11 @@ controls_msg:
 list.upos.default:
     db "    upOS Version 0.2                   ", 0x0D, 0x0A, 0x00
 list.upos.default.color:
-    db 0x07
+    db 0x70
 list.upos.qemu:
     db "    upOS Version 0.2 [QEMU debugging]  ", 0x0D, 0x0A, 0x00
 list.upos.qemu.color:
-    db 0x70
+    db 0x07
 list.len:
     dw 41
 
