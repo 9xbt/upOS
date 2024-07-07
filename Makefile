@@ -11,7 +11,7 @@ KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
 # Flags
 ASFLAGS = -f elf32 -Wall -g -F dwarf
-QEMUFLAGS = -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw -d int
+QEMUFLAGS = -D__DATE__="\"$(date +'%Y-%m-%d')\"" -D__TIME__="\"$(date +'%H:%M:%S')\"" -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw -d int
 
 # Output image name
 IMAGE_NAME = upOS
