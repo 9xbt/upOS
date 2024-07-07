@@ -10,7 +10,7 @@ section .text
 vga_clear:
     mov edi, 0xB8000
     mov ecx, 80 * 25 * 2
-    mov ax, 0x07
+    mov ax, 0x0700
     rep stosw
     ret
 
@@ -65,14 +65,16 @@ vga_putchar:
     pop ax
 
     mov byte [edi], al
-    mov byte [edi + 1], 0x0F
+    mov byte [edi + 1], 0x07
 
     inc dword [vga_x]
 
+    call vga_update_cursor
     ret
 vga_putchar.newline:
     mov dword [vga_x], 0x00
     inc dword [vga_y]
+    call vga_update_cursor
 
     cmp dword [vga_y], 25
     jge vga_scroll
@@ -82,6 +84,7 @@ vga_putchar.backspace:
     je .no
 
     dec dword [vga_x]
+    call vga_update_cursor
 vga_putchar.backspace.no:
     ret
 
@@ -102,6 +105,7 @@ vga_scroll:
 
     dec dword [vga_y]
     pop esi
+
     ret
 
 ; vga_enable_cursor - enables the vga text mode cursor
@@ -131,6 +135,33 @@ vga_enable_cursor:
     out dx, al
 
     ret
+
+; vga_update_cursor - updates the vga cursor position
+vga_update_cursor:
+; input bx = x, ax = y
+    mov ebx, [vga_x]
+    mov eax, [vga_y]
+
+	mov dl, 80
+	mul dl
+	add bx, ax
+
+	mov dx, 0x03D4
+	mov al, 0x0F
+	out dx, al
+
+	inc dl
+	mov al, bl
+	out dx, al
+
+	dec dl
+	mov al, 0x0E
+	out dx, al
+
+	inc dl
+	mov al, bh
+	out dx, al
+	ret
 
 section .data
 
