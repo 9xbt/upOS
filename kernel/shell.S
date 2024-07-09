@@ -24,6 +24,7 @@ shell_loop:
     ctsjtrie kbd_buffer, about_cmd, about_cmd_impl
     ctsjtrie kbd_buffer, credits_cmd, credits_cmd_impl
     ctsjtrie kbd_buffer, time_cmd, time_cmd_impl
+    ctsjtrie kbd_buffer, clear_cmd, clear_cmd_impl
 
     jmp shell_loop
 
@@ -57,6 +58,10 @@ time_cmd_impl:
     vga_print ":"
     print_time rtc_get_second
     vga_print 0xA
+    jmp shell_loop
+
+clear_cmd_impl:
+    call vga_clear
     jmp shell_loop
 
 ; cmp_string - compares strings
