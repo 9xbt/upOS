@@ -52,7 +52,6 @@ kmain.nodebug:
     call pic_install
     call kbd_install
     call vga_enable_cursor
-
 kmain.loop:
     jmp shell_entry
 

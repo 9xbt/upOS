@@ -11,6 +11,9 @@ section .text
 
 ; vga_clear - clears the VGA console
 vga_clear:
+    mov dword [vga_x], 0
+    mov dword [vga_y], 0
+
     mov edi, 0xB8000
     mov ecx, 80 * 25 * 2
     mov ah, [vga_color]
