@@ -3,6 +3,10 @@
 
 [global bcd_to_bin]
 [global int_to_str]
+[global rtc_get_century]
+[global rtc_get_year]
+[global rtc_get_month]
+[global rtc_get_day]
 [global rtc_get_hour]
 [global rtc_get_minute]
 [global rtc_get_second]
@@ -79,11 +83,55 @@ int_to_str:
 
     .done: ret
 
+; rtc_get_century - gets the current century
+; output:
+;   eax = the current century
+rtc_get_century:
+    mov eax, 0x32
+    out RTC_CMD, al
+
+    in al, RTC_DAT
+    call bcd_to_bin
+    ret
+
+; rtc_get_year - gets the current year
+; output:
+;   eax = the current year
+rtc_get_year:
+    mov eax, 0x09
+    out RTC_CMD, al
+
+    in al, RTC_DAT
+    call bcd_to_bin
+    ret
+
+; rtc_get_month - gets the current month
+; output:
+;   eax = the current month
+rtc_get_month:
+    mov eax, 0x08
+    out RTC_CMD, al
+
+    in al, RTC_DAT
+    call bcd_to_bin
+    ret
+
+; rtc_get_day - gets the current day of the month
+; output:
+;   eax = the current day of the month
+rtc_get_day:
+    mov eax, 0x07
+    out RTC_CMD, al
+
+    in al, RTC_DAT
+    call bcd_to_bin
+    ret
+
 ; rtc_get_hour - gets the current hour
 ; output:
 ;   eax = the current hour
 rtc_get_hour:
-    mov eax, 4
+    mov eax, 0x04
     out RTC_CMD, al
 
     in al, RTC_DAT
@@ -94,7 +142,7 @@ rtc_get_hour:
 ; output:
 ;   eax = the current minute
 rtc_get_minute:
-    mov eax, 2
+    mov eax, 0x02
     out RTC_CMD, al
 
     in al, RTC_DAT
@@ -106,7 +154,6 @@ rtc_get_minute:
 ;   eax = the current second
 rtc_get_second:
     xor eax, eax
-    mov al, 0
     out RTC_CMD, al
 
     in al, RTC_DAT
