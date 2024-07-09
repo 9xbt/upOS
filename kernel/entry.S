@@ -6,6 +6,8 @@ section .text
 %include "idt.inc"
 %include "pic.inc"
 %include "kbd.inc"
+%include "rtc.inc"
+%include "shell.inc"
 %include "serial.inc"
 
 section .text.prologue
@@ -52,15 +54,7 @@ kmain.nodebug:
     call vga_enable_cursor
 
 kmain.loop:
-    vga_print "> "
-    call kbd_get_string
-
-    vga_print "Text typed: "
-    mov esi, kbd_buffer
-    call vga_puts
-    vga_print 0x0A
-
-    jmp kmain.loop
+    jmp shell_entry
 
 section .data
 
