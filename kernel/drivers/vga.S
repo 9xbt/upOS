@@ -5,6 +5,7 @@
 [global vga_enable_cursor]
 [global vga_x]
 [global vga_y]
+[global vga_color]
 
 section .text
 
@@ -112,8 +113,9 @@ vga_scroll:
 
     cld
     rep movsw
-
-    mov ax, 0x0700
+    
+    mov ah, [vga_color]
+    mov al, 0x00
     mov ecx, 80
     mov edi, 0xB8F00
     rep stosw

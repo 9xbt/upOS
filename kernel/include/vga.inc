@@ -8,6 +8,7 @@
 [extern vga_enable_cursor]
 [extern vga_x]
 [extern vga_y]
+[extern vga_color]
 
 %macro vga_print 1+
     section .rodata
