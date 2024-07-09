@@ -16,28 +16,19 @@ jc %3
 
 shell_entry:
 shell_loop:
-    call rtc_get_second
-    mov edi, time_buffer
-    call int_to_str
-    mov esi, edi
-    call vga_puts
-
     mov byte [vga_color], 0x0C
     vga_print "# "
     mov byte [vga_color], 0x07
     call kbd_get_string
 
-    ;vga_print "Text typed: "
-    ;mov esi, kbd_buffer
-    ;call vga_puts
-    ;vga_print 0x0A
     ctsjtrie kbd_buffer, about_cmd, about_cmd_impl
     ctsjtrie kbd_buffer, credits_cmd, credits_cmd_impl
+    ctsjtrie kbd_buffer, time_cmd, time_cmd_impl
 
     jmp shell_loop
 
 about_cmd_impl:
-    vga_println "upOS (build ", __DATE__, " ", __TIME__, ")", 0x0A, "upOS is a 32-bit operating system made entirely in assembly.", 0x0A, "Made by winksplorer & xrc2. Licensed under MPL-2.0."
+    vga_println "upOS (build ", __DATE__, " ", __TIME__, ")", 0x0A, "upOS is a 32-bit operating system written entirely in assembly.", 0x0A, "Made by winksplorer & xrc2. Licensed under MPL-2.0."
     jmp shell_loop
 
 credits_cmd_impl:
@@ -49,6 +40,23 @@ credits_cmd_impl:
     mov byte [vga_color], 0x09
     vga_println "          _       _    ", 0xA, "__      _(_)_ __ | | __ Role: upOS Collaborator", 0xA, "\ \ /\ / / | '_ \| |/ / Other projects: malino, tefiti, moss, xfspy, ziOS",0xA, " \ V  V /| | | | |   <  About: Not a rust programmer. ",0xA,"  \_/\_/ |_|_| |_|_|\_\ Links: www.winksplorer.net",0xA,0xA,0
     mov byte [vga_color], 0x07
+    jmp shell_loop
+
+%macro print_time 1
+    call %1
+    mov edi, time_buffer
+    call int_to_str
+    mov esi, edi
+    call vga_puts
+%endmacro
+
+time_cmd_impl:
+    print_time rtc_get_hour
+    vga_print ":"
+    print_time rtc_get_minute
+    vga_print ":"
+    print_time rtc_get_second
+    vga_print 0xA
     jmp shell_loop
 
 ; cmp_string - compares strings
@@ -76,8 +84,14 @@ cmp_string.notequal:
 
 section .rodata
 
-about_cmd: db "about", 0
-credits_cmd: db "credits", 0
+about_cmd:
+    db "about", 0x00
+credits_cmd:
+    db "credits", 0x00
+time_cmd:
+    db "time", 0x00
+clear_cmd:
+    db "clear", 0x00
 
 section .data
 

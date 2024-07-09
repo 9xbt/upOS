@@ -3,6 +3,8 @@
 
 [global bcd_to_bin]
 [global int_to_str]
+[global rtc_get_hour]
+[global rtc_get_minute]
 [global rtc_get_second]
 
 ; bcd_to_bin - converts a binary-coded decimal value to binary
@@ -46,7 +48,18 @@ int_to_str:
         inc edi             ; move to next position
         test eax, eax       ; check if quotient is 0
         jnz .convert_loop
+   
+    ; ensure at least two digits
+    mov eax, edi
+    sub eax, ebx            ; calculate the length of the string (excluding null terminator)
+    cmp eax, 2              ; compare the length with 2 (at least two digits including null terminator)
+    jae .at_least_two
 
+    ; if the length is less than 2, add leading zero
+    mov byte [edi], '0'
+    inc edi
+
+.at_least_two:
     ; null-terminate the string
     mov byte [edi], 0
 
@@ -65,6 +78,28 @@ int_to_str:
         jmp .reverse_loop
 
     .done: ret
+
+; rtc_get_hour - gets the current hour
+; output:
+;   eax = the current hour
+rtc_get_hour:
+    mov eax, 4
+    out RTC_CMD, al
+
+    in al, RTC_DAT
+    call bcd_to_bin
+    ret
+
+; rtc_get_minute - gets the current minute
+; output:
+;   eax = the current minute
+rtc_get_minute:
+    mov eax, 2
+    out RTC_CMD, al
+
+    in al, RTC_DAT
+    call bcd_to_bin
+    ret
 
 ; rtc_get_second - gets the current second
 ; output:
