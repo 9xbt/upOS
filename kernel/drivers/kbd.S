@@ -43,12 +43,11 @@ kbd_get_string.loop:
     cmp dword [kbd_current_idx], 63
     jge .repeat
 
-
     mov edx, kbd_buffer
-kbd_get_string.test:
     add edx, [kbd_current_idx]
     mov cl, [kbd_char]
     mov [edx], cl
+    
     inc dword [kbd_current_idx]
     call vga_putchar
 kbd_get_string.loop.repeat:
