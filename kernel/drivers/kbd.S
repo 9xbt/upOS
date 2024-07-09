@@ -40,7 +40,7 @@ kbd_get_string.loop:
     cmp al, 0x09
     je kbd_get_string.tab
 
-    cmp dword [kbd_current_idx], 64
+    cmp dword [kbd_current_idx], 63
     jge .repeat
 
 
