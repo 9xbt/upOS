@@ -3,5 +3,6 @@
 
 [extern kbd_install]
 [extern kbd_get_string]
+[extern kbd_buffer]
 
 %endif

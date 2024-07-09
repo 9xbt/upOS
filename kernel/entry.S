@@ -39,8 +39,7 @@ kmain.badmagic:
 kmain.goodmagic:
     call vga_clear
 
-    vga_println "Welcome to upOS!"
-    vga_println "Build date: ", __DATE__, " ", __TIME__, 0x0A
+    vga_println "Welcome to upOS (build ", __DATE__, " ", __TIME__, ")!", 0x0A
 
     cmp dword [boot_header.flags], 0x00000001
     jne kmain.nodebug
@@ -55,6 +54,8 @@ kmain.nodebug:
 kmain.loop:
     vga_print "> "
     call kbd_get_string
+    mov esi, kbd_buffer
+    call vga_puts
     jmp kmain.loop
 
 section .data
