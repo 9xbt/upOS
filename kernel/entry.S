@@ -54,8 +54,12 @@ kmain.nodebug:
 kmain.loop:
     vga_print "> "
     call kbd_get_string
+
+    vga_print "Text typed: "
     mov esi, kbd_buffer
     call vga_puts
+    vga_print 0x0A
+
     jmp kmain.loop
 
 section .data

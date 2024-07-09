@@ -12,7 +12,8 @@ section .text
 vga_clear:
     mov edi, 0xB8000
     mov ecx, 80 * 25 * 2
-    mov ax, 0x0700
+    mov ah, [vga_color]
+    mov al, 0x00
     rep stosw
     ret
 
@@ -70,7 +71,8 @@ vga_putchar:
     pop ax
 
     mov byte [edi], al
-    mov byte [edi + 1], 0x07
+    mov al, [vga_color]
+    mov byte [edi + 1], al
 
     inc dword [vga_x]
 
@@ -193,5 +195,7 @@ vga_x:
     dd 0
 vga_y:
     dd 0
+vga_color:
+    db 0x07
 vga_tab:
     db "    ", 0

@@ -47,7 +47,7 @@ kbd_get_string.loop:
     add edx, [kbd_current_idx]
     mov cl, [kbd_char]
     mov [edx], cl
-    
+
     inc dword [kbd_current_idx]
     call vga_putchar
 kbd_get_string.loop.repeat:
@@ -115,8 +115,6 @@ kbd_handler.char.print:
     mov al, [ebx]
     mov [kbd_char], al
     ret
-    ;call vga_putchar
-    ;ret
 kbd_handler.release:
     ; shift up
     cmp al, 0xaa
