@@ -91,7 +91,7 @@ reboot_cmd.handler:
     ;
     ; Mario says: You should properly ask the power management unit to restart the CPU
     ; Luigi says: To turn it off, just triple fault
-    lidt [0x091101]
+    lidt [0]
     int 0
     vga_println "Rebooting didn't work. Fuck you."
     jmp shell_loop
