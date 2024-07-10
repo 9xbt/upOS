@@ -1,10 +1,10 @@
+section .text
+
 %include "vga.inc"
 %include "kbd.inc"
 %include "rtc.inc"
 
 [global shell_entry]
-
-section .text
 
 ; ctsjtrie - Compare Two Strings and Jump to Routine If Equal
 %macro ctsjtrie 3
@@ -21,46 +21,33 @@ shell_loop:
     mov byte [vga_color], 0x07
     call kbd_get_string
 
-    ctsjtrie kbd_buffer, about_cmd, about_cmd_impl
-    ctsjtrie kbd_buffer, credits_cmd, credits_cmd_impl
-    ctsjtrie kbd_buffer, time_cmd, time_cmd_impl
-    ctsjtrie kbd_buffer, clear_cmd, clear_cmd_impl
+    ctsjtrie kbd_buffer, about_cmd, about_cmd.handler
+    ctsjtrie kbd_buffer, credits_cmd, credits_cmd.handler
+    ctsjtrie kbd_buffer, date_cmd, date_cmd.handler
+    ctsjtrie kbd_buffer, clear_cmd, clear_cmd.handler
 
     jmp shell_loop
 
-about_cmd_impl:
+about_cmd.handler:
     vga_println "upOS (build ", __DATE__, " ", __TIME__, ")", 0x0A, "upOS is a 32-bit operating system written entirely in assembly.", 0x0A, "Made by winksplorer & xrc2. Licensed under MPL-2.0."
     jmp shell_loop
 
-credits_cmd_impl:
+credits_cmd.handler:
     call vga_clear
     mov byte [vga_color], 0x02
     vga_println "                                -- CREDITS --                                 ",0
     mov byte [vga_color], 0x0E
-    vga_println "                   ___  ", 0xA, "               |__ \ ", 0xA, "__  ___ __ ___   ) | Role: upOS Owner", 0xA, "\ \/ / '__/ __| / /  Other projects: Medlar64, GoOS, WebWatcher, tinyboot", 0xA, " >  <| | | (__ / /_  About: Just an average coder that codes stuff.", 0xA, "/_/\_\_|  \___|____| Links: www.mobren.net",0xA,0xA,0
+    vga_println "                   ___  ", 0xA, "               |__ \ ", 0xA, "__  ___ __ ___   ) | Role: upOS Owner", 0xA, "\ \/ / '__/ __| / /  Other projects: Medlar64, WebWatcher, 9xVM, SVGAIITerminal", 0xA, " >  <| | | (__ / /_  About: Just an average coder that codes stuff.", 0xA, "/_/\_\_|  \___|____| Links: www.mobren.net",0xA,0xA,0
     mov byte [vga_color], 0x09
     vga_println "          _       _    ", 0xA, "__      _(_)_ __ | | __ Role: upOS Collaborator", 0xA, "\ \ /\ / / | '_ \| |/ / Other projects: malino, tefiti, moss, xfspy, ziOS",0xA, " \ V  V /| | | | |   <  About: Not a rust programmer. ",0xA,"  \_/\_/ |_|_| |_|_|\_\ Links: www.winksplorer.net",0xA,0xA,0
     mov byte [vga_color], 0x07
     jmp shell_loop
 
-%macro print_time 1
-    call %1
-    mov edi, time_buffer
-    call int_to_str
-    mov esi, edi
-    call vga_puts
-%endmacro
-
-time_cmd_impl:
-    print_time rtc_get_hour
-    vga_print ":"
-    print_time rtc_get_minute
-    vga_print ":"
-    print_time rtc_get_second
-    vga_print 0xA
+date_cmd.handler:
+    call rtc_print_date
     jmp shell_loop
 
-clear_cmd_impl:
+clear_cmd.handler:
     call vga_clear
     jmp shell_loop
 
@@ -93,8 +80,8 @@ about_cmd:
     db "about", 0x00
 credits_cmd:
     db "credits", 0x00
-time_cmd:
-    db "time", 0x00
+date_cmd:
+    db "date", 0x00
 clear_cmd:
     db "clear", 0x00
 

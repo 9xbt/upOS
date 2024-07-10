@@ -10,5 +10,6 @@
 [extern rtc_get_hour]
 [extern rtc_get_minute]
 [extern rtc_get_second]
+[extern rtc_print_date]
 
 %endif

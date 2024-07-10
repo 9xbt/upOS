@@ -1,3 +1,7 @@
+section .text
+
+%include "vga.inc"
+
 %define RTC_CMD 0x70
 %define RTC_DAT 0x71
 
@@ -10,6 +14,15 @@
 [global rtc_get_hour]
 [global rtc_get_minute]
 [global rtc_get_second]
+[global rtc_print_date]
+
+%macro rtc_print 1
+call %1
+mov edi, time_buffer
+call int_to_str
+mov esi, edi
+call vga_puts
+%endmacro
 
 ; bcd_to_bin - converts a binary-coded decimal value to binary
 ; arguments:
@@ -159,3 +172,26 @@ rtc_get_second:
     in al, RTC_DAT
     call bcd_to_bin
     ret
+
+; rtc_print_date - prints the date and time
+; output:
+;   the date and time printed on the terminal
+rtc_print_date:
+    rtc_print rtc_get_month
+    vga_print "-"
+    rtc_print rtc_get_day
+    vga_print "-"
+    rtc_print rtc_get_year
+    vga_print " "
+    rtc_print rtc_get_hour
+    vga_print ":"
+    rtc_print rtc_get_minute
+    vga_print ":"
+    rtc_print rtc_get_second
+    vga_print 0xA
+    ret
+
+section .bss
+
+time_buffer:
+    resb 3
