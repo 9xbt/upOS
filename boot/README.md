@@ -1,7 +1,7 @@
 # upOS bootloader 0.2
 This folder contains the source code to the upOS bootloader.
 
-This is a simple 16-bit (real mode) bootloader written entirely in assembly. It supports booting 32-bit protected mode kernels with a simple boot protocol. The bootloader provides a menu to select which OS to boot (right now it's hard coded, so you either boot upOS or boot upOS with QEMU debugging enabled).
+This is a simple 16-bit (real mode) bootloader written entirely in assembly. It supports booting 32-bit protected mode kernels with a simple boot protocol. The bootloader provides a menu to select which OS to boot (right now it's hard coded, so you either boot upOS or upOS with QEMU debugging enabled).
 
 The bootloader uses its own simple boot protocol. Here's how the boot header looks like:
 
