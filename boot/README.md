@@ -5,11 +5,11 @@ This is a simple 16-bit (real mode) bootloader written entirely in assembly. It 
 
 The bootloader uses its own simple boot protocol. Here's how the boot header looks like:
 
-| Name    | Size    | Offset | Description                                     |
-|---------|---------|--------|-------------------------------------------------|
-| Magic   | 4 bytes | 0x0    | Boot header magic. Should always be 0x1BADB002. |
-| Version | 4 bytes | 0x4    | Boot header version. Should be 0.2.             |
-| Flags   | 4 bytes | 0x8    | Boot flags.                                     |
+| Name    | Size    | Offset | Description                                       |
+|---------|---------|--------|---------------------------------------------------|
+| Magic   | 4 bytes | 0x0    | Boot header magic. Should always be `0x1BADB002`. |
+| Version | 8 bytes | 0x4    | Boot header version. Should be "0.2".             |
+| Flags   | 4 bytes | 0x10   | Boot flags.                                       |
 
 > [!NOTE]
 > The boot header *will* be expanded in the future, but we'll try to not break compatibility with older versions
