@@ -7,6 +7,7 @@ section .text
 %include "pic.inc"
 %include "kbd.inc"
 %include "rtc.inc"
+%include "ata.inc"
 %include "shell.inc"
 %include "serial.inc"
 
@@ -40,6 +41,7 @@ kmain.badmagic:
     jmp $
 kmain.goodmagic:
     call vga_clear
+    call vga_enable_cursor
 
     vga_println "Welcome to upOS (build ", __DATE__, " ", __TIME__, ")!", 0x0A
 
@@ -50,8 +52,8 @@ kmain.qemudebug:
 kmain.nodebug:
     call idt_install
     call pic_install
+    call ata_install
     call kbd_install
-    call vga_enable_cursor
 kmain.loop:
     jmp shell_entry
 

@@ -60,8 +60,10 @@ isr_handler:
     je .spurious
 
     lea eax, [ecx * 4 + exceptions]
-    
+
+    push eax
     vga_print "x86 Fault: "
+    pop eax
 
     mov esi, [eax]
     call vga_puts

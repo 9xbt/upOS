@@ -14,17 +14,42 @@ call cmp_string
 jc %3
 %endmacro
 
+; shell_cmp - only compares first argument
+%macro shell_cmp 1
+mov esi, kbd_buffer
+call command_name.clear
+call command_name.get
+ctsjtrie command_name, %1, %1.handler
+%endmacro
+
 shell_entry:
 shell_loop:
     mov byte [vga_color], 0x0C
     vga_print "# "
-    mov byte [vga_color], 0x07
+    mov byte [vga_color], 0x0F
     call kbd_get_string
+    mov byte [vga_color], 0x07
+    
+    ;ctsjtrie kbd_buffer, about_cmd, about_cmd.handler
+    ;ctsjtrie kbd_buffer, credits_cmd, credits_cmd.handler
+    ;ctsjtrie kbd_buffer, date_cmd, date_cmd.handler
+    ;ctsjtrie kbd_buffer, clear_cmd, clear_cmd.handler
+    ;ctsjtrie kbd_buffer, help_cmd, help_cmd.handler
+    ;ctsjtrie kbd_buffer, echo_cmd, echo_cmd.handler
+    shell_cmp about_cmd
+    shell_cmp credits_cmd
+    shell_cmp date_cmd
+    shell_cmp clear_cmd
+    shell_cmp help_cmd
+    shell_cmp echo_cmd
+    shell_cmp reboot_cmd
 
-    ctsjtrie kbd_buffer, about_cmd, about_cmd.handler
-    ctsjtrie kbd_buffer, credits_cmd, credits_cmd.handler
-    ctsjtrie kbd_buffer, date_cmd, date_cmd.handler
-    ctsjtrie kbd_buffer, clear_cmd, clear_cmd.handler
+    ctsjtrie kbd_buffer, rust_user_brain_size, shell_loop
+
+    mov esi, kbd_buffer
+    mov byte [vga_color], 0x0C
+    call vga_puts
+    vga_println ": command not found."
 
     jmp shell_loop
 
@@ -51,6 +76,26 @@ clear_cmd.handler:
     call vga_clear
     jmp shell_loop
 
+help_cmd.handler:
+    vga_println "Available commands:", 0x0A, "about - Shows info about upOS", 0x0A, "credits - ASCII names of the people who created upOS", 0x0A, "date - Shows the date & time", 0x0A, "clear - Clears the screen.", 0x0A, "echo - Echos back the arguments (akin to the voices in your head)", 0x0A, "help - Shows this screen."
+    jmp shell_loop
+
+echo_cmd.handler:
+    mov esi, kbd_buffer+5
+    call vga_puts
+    vga_print 0x0A
+    jmp shell_loop
+
+reboot_cmd.handler:
+    ; What are the Mario Bros views on rebooting?
+    ;
+    ; Mario says: You should properly ask the power management unit to restart the CPU
+    ; Luigi says: To turn it off, just triple fault
+    lidt [0x091101]
+    int 0
+    vga_println "Rebooting didn't work. Fuck you."
+    jmp shell_loop
+
 ; cmp_string - compares strings
 ; arguments:
 ;   esi = first string to compare
@@ -74,6 +119,35 @@ cmp_string.notequal:
     clc
     ret
 
+; get_command_name - gets the first argument of a command, i.e. the name of the command.
+; arguments:
+;   esi = the string to get the first command name of
+; output:
+;   command_name is set
+command_name.get:
+    mov edi, command_name
+command_name.get.loop:
+    lodsb
+    cmp al, ' '
+    je  command_name.get.end
+    cmp al, 0
+    je  command_name.get.end
+    stosb
+    jmp command_name.get.loop
+command_name.get.end:
+    mov byte [edi], 0
+    ret
+
+; ooooh nice!
+
+command_name.clear:
+    mov edi, command_name
+    mov ecx, 10
+    xor eax, eax
+    rep stosb
+    ret
+
+
 section .rodata
 
 about_cmd:
@@ -84,7 +158,18 @@ date_cmd:
     db "date", 0x00
 clear_cmd:
     db "clear", 0x00
+help_cmd:
+    db "help", 0x00
+echo_cmd:
+    db "echo", 0x00
+reboot_cmd:
+    db "reboot", 0x00
+rust_user_brain_size:
+    db 0x00
 
 section .data
 
 time_buffer: db 3
+
+section .bss
+command_name resb 10
