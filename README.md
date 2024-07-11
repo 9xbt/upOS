@@ -1,6 +1,6 @@
 # upOS
 
-<img src="https://img.shields.io/github/languages/code-size/Winksplorer/upOS?style=for-the-badge&logo=files"/>
+<a><img src="https://img.shields.io/github/languages/code-size/Winksplorer/upOS?style=for-the-badge&logo=files"/></a>
 <a href="https://github.com/Winksplorer/upOS/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Winksplorer/upOS?style=for-the-badge&logo=mozilla"/></a>
 <img src="https://img.shields.io/badge/pain_and_suffering-in_assembly-blue?style=for-the-badge&logo=intel">
 <img src="https://img.shields.io/badge/i_personally-HATE_C-blue?style=for-the-badge&logo=c">
