@@ -27,6 +27,8 @@ kbd_get_string:
 
     mov dword [kbd_current_idx], 0
 kbd_get_string.loop:
+    hlt
+
     mov al, [kbd_char]
     cmp al, 0
     je .repeat
