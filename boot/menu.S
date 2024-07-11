@@ -164,10 +164,10 @@ select_msg:
 loading_msg.1:
     db "Loading ", '"', 0x00
 loading_msg.2:
-    db '"', "...", 0x0D, 0x0A, 0x00
+    db '"', "... ", 0x00
 
 fail_msg:
-    db " failed.", 0x00
+    db "failed.", 0x00
 
 controls_msg:
     db 0x0A, "Use ", 0x18, " and ", 0x19, " to move the highlight to your choice.", 0x0D, 0x0A
@@ -200,7 +200,7 @@ boot_header:
 dap:
     db 0x10         ; size of packet
     db 0x00         ; reserved/unused
-    dw 0x0040       ; sectors to read
+    dw 0x007F       ; sectors to read
     dw 0x0000       ; offset (low 16 bits of the address)
     dw 0x1000       ; segment (high 16 bits of the address)
     dq 0x00000003   ; LBA (fourth sector, LBA 3)
