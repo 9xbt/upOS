@@ -40,6 +40,7 @@ shell_loop:
     cmp byte [kbd_buffer], 0
     jz shell_loop
 
+    mov byte [vga_color], 0x04
     mov esi, kbd_buffer
     call vga_puts
     vga_println ": command not found"
