@@ -130,16 +130,12 @@ command_name.get.loop:
 command_name.get.end:
     mov byte [edi], 0
     ret
-
-; ooooh nice!
-
 command_name.clear:
     mov edi, command_name
     mov ecx, 10
     xor eax, eax
     rep stosb
     ret
-
 
 section .rodata
 
