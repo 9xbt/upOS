@@ -125,6 +125,7 @@ ata_identify.label_loop:
     lodsb
     mov [edi], al
 
+    inc ecx
     add edi, 2
     jmp ata_identify.label_loop
 ata_identify.done:
