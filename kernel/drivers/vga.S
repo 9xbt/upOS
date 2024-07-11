@@ -48,9 +48,6 @@ vga_putchar:
     cmp al, 0x09
     je .tab
 
-    cmp byte [vga_x], 80
-    jge .newline
-
     push ax
 
     ; vga_y * 160
@@ -79,6 +76,8 @@ vga_putchar:
     mov byte [edi + 1], al
 
     inc dword [vga_x]
+    cmp byte [vga_x], 80
+    jge .newline
 
     call vga_update_cursor
     ret
@@ -96,7 +95,11 @@ vga_putchar.backspace:
 
     dec dword [vga_x]
     call vga_update_cursor
+    ret
 vga_putchar.backspace.no:
+    mov dword [vga_x], 79
+    dec dword [vga_y]
+    call vga_update_cursor
     ret
 vga_putchar.tab:
     push esi
@@ -169,7 +172,6 @@ vga_disable_cursor:
 
 ; vga_update_cursor - updates the vga cursor position
 vga_update_cursor:
-; input bx = x, ax = y
     mov ebx, [vga_x]
     mov eax, [vga_y]
 

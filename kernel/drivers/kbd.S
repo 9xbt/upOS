@@ -19,7 +19,7 @@ kbd_install:
 
 kbd_get_string:
     xor al, al
-    mov ecx, 64
+    mov ecx, 256
     mov edi, kbd_buffer
 
     cld
@@ -40,7 +40,7 @@ kbd_get_string.loop:
     cmp al, 0x09
     je kbd_get_string.tab
 
-    cmp dword [kbd_current_idx], 63
+    cmp dword [kbd_current_idx], 256
     jge .repeat
 
     mov edx, kbd_buffer
@@ -189,7 +189,6 @@ kbd_ctrl:
 kbd_shift:
     db 0
 kbd_buffer:
-    times 64 db 0
-; kbd_current_idx - current position of kdb_get_string in the buffer
+    times 256 db 0
 kbd_current_idx:
     dd 0
