@@ -10,6 +10,7 @@ section .text
 %include "ata.inc"
 %include "shell.inc"
 %include "serial.inc"
+%include "pmm.inc"
 
 section .text.prologue
 
@@ -54,6 +55,7 @@ kmain.nodebug:
     call pic_install
     call ata_install
     call kbd_install
+    call pmm_install
 kmain.loop:
     jmp shell_entry
 
