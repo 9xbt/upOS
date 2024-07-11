@@ -26,16 +26,9 @@ shell_entry:
 shell_loop:
     mov byte [vga_color], 0x0C
     vga_print "# "
-    mov byte [vga_color], 0x0F
-    call kbd_get_string
     mov byte [vga_color], 0x07
-    
-    ;ctsjtrie kbd_buffer, about_cmd, about_cmd.handler
-    ;ctsjtrie kbd_buffer, credits_cmd, credits_cmd.handler
-    ;ctsjtrie kbd_buffer, date_cmd, date_cmd.handler
-    ;ctsjtrie kbd_buffer, clear_cmd, clear_cmd.handler
-    ;ctsjtrie kbd_buffer, help_cmd, help_cmd.handler
-    ;ctsjtrie kbd_buffer, echo_cmd, echo_cmd.handler
+    call kbd_get_string
+
     shell_cmp about_cmd
     shell_cmp credits_cmd
     shell_cmp date_cmd
@@ -44,12 +37,12 @@ shell_loop:
     shell_cmp echo_cmd
     shell_cmp reboot_cmd
 
-    ctsjtrie kbd_buffer, rust_user_brain_size, shell_loop
+    cmp byte [kbd_buffer], 0
+    jz shell_loop
 
     mov esi, kbd_buffer
-    mov byte [vga_color], 0x0C
     call vga_puts
-    vga_println ": command not found."
+    vga_println ": command not found"
 
     jmp shell_loop
 
