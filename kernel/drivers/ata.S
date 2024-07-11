@@ -119,19 +119,17 @@ ata_identify.send_ident:
     mov edi, ata_drive_label
     xor ecx, ecx
 ata_identify.label_loop:
-    cmp ecx, 40
+    cmp ecx, 20
     je ata_identify.done
 
-    lodsb
-    mov [edi], al
+    lodsw
+    mov [edi], ah
+    mov [edi + 1], al
 
     inc ecx
     add edi, 2
     jmp ata_identify.label_loop
 ata_identify.done:
-    ;mov esi, ata_drive_label
-    ;call vga_puts
-
     xor al, al
     ret
 ata_identify.no_drives:
