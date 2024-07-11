@@ -62,6 +62,9 @@ kbd_get_string.backspace:
     je .no
 
     dec dword [kbd_current_idx]
+    mov edx, kbd_buffer
+    add edx, [kbd_current_idx]
+    mov byte [edx], 0
     vga_print 0x08, 0x20, 0x08
 kbd_get_string.backspace.no:
     jmp kbd_get_string.loop.repeat
