@@ -56,7 +56,7 @@ credits_cmd.handler:
     mov byte [vga_color], 0x02
     vga_println "                                -- CREDITS --                                 ",0
     mov byte [vga_color], 0x0E
-    vga_println "                   ___  ", 0xA, "               |__ \ ", 0xA, "__  ___ __ ___   ) | Role: upOS Owner", 0xA, "\ \/ / '__/ __| / /  Other projects: Medlar64, WebWatcher, 9xVM, SVGAIITerminal", 0xA, " >  <| | | (__ / /_  About: Just an average coder that codes stuff.", 0xA, "/_/\_\_|  \___|____| Links: www.mobren.net",0xA,0xA,0
+    vga_println "                  ___   ", 0xA, "               |__ \ ", 0xA, "__  ___ __ ___   ) | Role: upOS Owner", 0xA, "\ \/ / '__/ __| / /  Other projects: Medlar64, WebWatcher, 9xVM, SVGAIITerminal", 0xA, " >  <| | | (__ / /_  About: Just an average coder that codes stuff.", 0xA, "/_/\_\_|  \___|____| Links: www.mobren.net",0xA,0xA,0
     mov byte [vga_color], 0x09
     vga_println "          _       _    ", 0xA, "__      _(_)_ __ | | __ Role: upOS Collaborator", 0xA, "\ \ /\ / / | '_ \| |/ / Other projects: malino, tefiti, moss, xfspy, ziOS",0xA, " \ V  V /| | | | |   <  About: Not a rust programmer. ",0xA,"  \_/\_/ |_|_| |_|_|\_\ Links: www.winksplorer.net",0xA,0xA,0
     mov byte [vga_color], 0x07
