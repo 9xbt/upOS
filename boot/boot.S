@@ -27,8 +27,11 @@ read_disk:
     mov ah, 0x42
     mov si, dap
     int 0x13
-    jc $
+    jc .disk_error
     ret
+.disk_error:
+    ; TODO: maybe print an error
+    jmp $
 
 boot_disk:
     db 0x00
