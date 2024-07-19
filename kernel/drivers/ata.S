@@ -25,7 +25,7 @@ section .text
 [global ata_install]
 
 ; ata_400ns - waits roughly 400ns
-; output:
+; outputs:
 ;   al = error code
 ata_400ns:
     xor cx, cx
@@ -42,9 +42,9 @@ ata_400ns.loop:
 ata_400ns.done:
     ret
 
-; ata_poll - polls from ata
-; output:
-;   al = error code
+; ata_poll - polls from ATA
+; outputs:
+;   al = error code (zero if none)
 ata_poll:
     call ata_400ns
     mov dx, [ata_base]
@@ -71,12 +71,12 @@ ata_poll.error:
     mov al, ATA_DISK_ERR
     ret
 
-; ata_identify - identifies an ata disk
-; arguments:
+; ata_identify - identifies an ATA drive
+; parameters:
 ;   al = master or slave
 ;   dx = primary or secondary
 ; outputs:
-;   al = error code
+;   al = error code (zero if none)
 ata_identify:
     mov word [ata_base], dx
     mov byte [ata_type], al
@@ -139,7 +139,7 @@ ata_identify.disk_error:
     mov al, ATA_DISK_ERR
     ret
 
-; ata_read - reads data from a drive
+; ata_read - reads sectors from a drive
 ; arguments:
 ;   ecx = number of sectors to read
 ;   esi = starting lba address
@@ -199,7 +199,7 @@ ata_read:
     xor al, al
     ret
 
-; ata_install - initializes the ata-pio driver
+; ata_install - initializes the ATA driver
 ata_install:
     mov al, ATA_MASTER
     mov dx, ATA_PRIMARY
@@ -208,7 +208,7 @@ ata_install:
     cmp al, 0
     jnz .error
 
-    serial_println "ata_install: initialized ATA (00)"
+    serial_println "ata_install: initialized ATA"
     ret
 ata_install.error:
     xor ebx, ebx
@@ -218,12 +218,10 @@ ata_install.error:
     mov edi, ata_error
     call int_to_str
 
-    serial_print "ata_install: failed to initialize ATA ("
+    serial_print "ata_install: failed to initialize ATA: error "
 
     mov esi, ata_error
     call serial_puts
-
-    serial_println ")"
     ret
 
 section .data

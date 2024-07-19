@@ -75,7 +75,6 @@ kbd_get_string.tab:
 
 ; kbd_handler - handles keyboard interrupts
 kbd_handler:
-    ;vga_println "Keyboard!"
     xor eax, eax
     in al, 0x60
 

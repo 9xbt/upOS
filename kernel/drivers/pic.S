@@ -24,8 +24,7 @@ section .text
 [global pic_install]
 [global pic_eoi]
 
-; pic_install - sets up the two programmable interrupt controllers
-; this will start the init sequence in cascade mode
+; pic_install - sets up the two programmable interrupt controllers in cascade mode
 pic_install:
     mov al, ICW1_INIT | ICW1_ICW4
     mov dx, PIC1_CMD
@@ -64,8 +63,8 @@ pic_install:
     serial_println "pic_install: initialized PIC"
     ret
 
-; pic_eoi - PIC end of interrupt
-; arguments:
+; pic_eoi - sends the end of interrupt (EOI) command to the PIC
+; parameters:
 ;   cl: interrupt number
 pic_eoi:
     mov al, 0x20
@@ -76,6 +75,5 @@ pic_eoi:
     cmp cl, 40
     jge .end
     out 0xA0, al
-
 .end:
     ret
