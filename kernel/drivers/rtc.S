@@ -181,6 +181,7 @@ rtc_print_date:
     vga_print "-"
     rtc_print rtc_get_day
     vga_print "-"
+    rtc_print rtc_get_century
     rtc_print rtc_get_year
     vga_print " "
     rtc_print rtc_get_hour
