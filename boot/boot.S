@@ -19,16 +19,12 @@ _start:
     mov ax, 3
     int 0x10
 
-    call read_disk
-    jmp list_handler
-
 ; read_disk - reads disk.
 read_disk:
     mov ah, 0x42
     mov si, dap
     int 0x13
-    jc .disk_error
-    ret
+    jnc list_handler
 .disk_error:
     ; TODO: maybe print an error
     jmp $
