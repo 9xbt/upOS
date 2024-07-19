@@ -51,10 +51,10 @@ pic_install:
     mov dx, PIC2_DAT
     out dx, al          ; Same thing
 
-    mov al, 00000000b
+    mov al, 0x20
     mov dx, PIC1_DAT
     out dx, al          ; Master PIC mask
-    mov al, 00000000b
+    mov al, 0x28
     mov dx, PIC2_DAT
     out dx, al          ; Slave PIC mask
 
