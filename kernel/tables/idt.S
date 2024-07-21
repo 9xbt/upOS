@@ -67,6 +67,8 @@ isr_handler:
 
     mov esi, [eax]
     call vga_puts
+
+    vga_print 0x0A
     cli
 isr_handler.halt:
     hlt

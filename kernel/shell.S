@@ -3,6 +3,9 @@ section .text
 %include "vga.inc"
 %include "kbd.inc"
 %include "rtc.inc"
+%include "cpuid.inc"
+
+%define RUST_USER_BRAIN_SIZE 0
 
 [global shell_entry]
 
@@ -36,11 +39,12 @@ shell_loop:
     shell_cmp help_cmd
     shell_cmp echo_cmd
     shell_cmp reboot_cmd
+    shell_cmp cpuid_cmd
 
-    cmp byte [kbd_buffer], 0
+    cmp byte [kbd_buffer], RUST_USER_BRAIN_SIZE
     jz shell_loop
 
-    mov byte [vga_color], 0x04
+    mov byte [vga_color], 0x0C
     mov esi, kbd_buffer
     call vga_puts
     vga_println ": command not found"
@@ -71,7 +75,7 @@ clear_cmd.handler:
     jmp shell_loop
 
 help_cmd.handler:
-    vga_println "Available commands:", 0x0A, "about - Shows info about upOS", 0x0A, "credits - ASCII names of the people who created upOS", 0x0A, "date - Shows the date & time", 0x0A, "clear - Clears the screen.", 0x0A, "echo - Echos back the arguments (akin to the voices in your head)", 0x0A, "help - Shows this screen."
+    vga_println "Available commands:", 0x0A, "about - Shows info about upOS", 0x0A, "credits - ASCII names of the people who created upOS", 0x0A, "date - Shows the date & time", 0x0A, "clear - Clears the screen.", 0x0A, "echo - Echos back the arguments (akin to the voices in your head)", 0x0A, "help - Shows this screen.", 0x0A, "cpuid - Displays the CPU vendor string"
     jmp shell_loop
 
 echo_cmd.handler:
@@ -87,7 +91,12 @@ reboot_cmd.handler:
     ; Luigi says: To turn it off, just triple fault
     lidt [0]
     int 0
-    vga_println "Rebooting didn't work. Fuck you."
+
+cpuid_cmd.handler:
+    call cpu_get_vendor
+    call vga_puts
+    vga_print 0x0A
+
     jmp shell_loop
 
 ; cmp_string - compares strings
@@ -154,8 +163,8 @@ echo_cmd:
     db "echo", 0x00
 reboot_cmd:
     db "reboot", 0x00
-rust_user_brain_size:
-    db 0x00
+cpuid_cmd:
+    db "cpuid", 0x00
 
 section .data
 
