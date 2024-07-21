@@ -44,7 +44,7 @@ kmain.goodmagic:
     call vga_clear
     call vga_enable_cursor
 
-    vga_println "Welcome to upOS (build ", __DATE__, " ", __TIME__, ")!", 0x0A
+    vga_println "Welcome to upOS v0.3 (build ", __DATE__, " ", __TIME__, ")!", 0x0A
 
     cmp dword [boot_header.flags], 0x00000001
     jne kmain.nodebug
