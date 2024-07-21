@@ -59,7 +59,7 @@ ata_poll.loop:
 
     mov al, [ata_status]
     and al, 0x08
-    jnz ata_poll.done
+    jz ata_poll.error
 
     mov al, [ata_status]
     and al, 0x01
@@ -133,9 +133,13 @@ ata_identify.done:
     xor al, al
     ret
 ata_identify.no_drives:
+    serial_println "ata_identify: error: no drives found"
+
     mov al, ATA_NO_DRIVES
     ret
 ata_identify.disk_error:
+    serial_println "ata_identify: error: drive failure"
+
     mov al, ATA_DISK_ERR
     ret
 
@@ -208,7 +212,7 @@ ata_install:
     cmp al, 0
     jnz .error
 
-    serial_println "ata_install: initialized ATA"
+    serial_println "ata_install: initialized ATA driver"
     ret
 ata_install.error:
     xor ebx, ebx
@@ -218,7 +222,7 @@ ata_install.error:
     mov edi, ata_error
     call int_to_str
 
-    serial_print "ata_install: failed to initialize ATA: error "
+    serial_print "ata_install: failed to initialize ATA driver: error "
 
     mov esi, ata_error
     call serial_puts
