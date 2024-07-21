@@ -194,6 +194,8 @@ ata_read:
     add dx, 2
     out dx, al
 
+    call ata_poll
+
     mov dx, ATA_PRIMARY
     mov ecx, 256
     rep insw
@@ -213,6 +215,28 @@ ata_install:
     jnz .error
 
     serial_println "ata_install: initialized ATA driver"
+
+    mov esi, ata_drive_label
+    call vga_puts
+    vga_print 0x0A
+
+    mov ecx, 1
+    mov esi, 0
+    mov edi, ata_temp_buffer
+    call ata_read
+
+    mov esi, ata_temp_buffer
+    xor ecx, ecx
+ata_install.loop:
+    cmp ecx, 512
+    jge ata_install.done
+
+    lodsb
+    out 0xe9, al
+
+    inc ecx
+    jmp ata_install.loop
+ata_install.done:
     ret
 ata_install.error:
     xor ebx, ebx
