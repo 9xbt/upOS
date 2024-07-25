@@ -19,7 +19,7 @@ IMAGE_NAME = upOS
 all: dirs boot kernel hdd
 
 run: all
-	qemu-system-i386 $(QEMUFLAGS) | xxd
+	qemu-system-i386 $(QEMUFLAGS) -display sdl
 
 run-gtk: all
 	qemu-system-i386 $(QEMUFLAGS) -display gtk,zoom-to-fit=on

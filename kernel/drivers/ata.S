@@ -24,26 +24,21 @@ section .text
 
 [global ata_install]
 [global ata_read]
+[global ata_drive_label]
+[global ata_drive_sn]
+[global ata_disk_size]
 
 ; ata_400ns - waits roughly 400ns
 ; outputs:
 ;   al = error code
 ata_400ns:
-    push cx
-
-    xor cx, cx
     mov dx, [ata_base]
     add dx, 7
-ata_400ns.loop:
-    cmp cx, 15
-    jg ata_400ns.done
 
     in al, dx
-    
-    inc cx
-    jmp ata_400ns.loop
-ata_400ns.done:
-    pop cx
+    in al, dx
+    in al, dx
+    in al, dx
     ret
 
 ; ata_poll - polls from ATA
@@ -122,13 +117,12 @@ ata_identify.send_ident:
     cmp al, 0
     jnz ata_identify.disk_error
 
-    mov esi, ata_identify_buffer
-    add esi, 54
+    mov esi, ata_identify_buffer + 54
     mov edi, ata_drive_label
     xor ecx, ecx
 ata_identify.label_loop:
     cmp ecx, 20
-    je ata_identify.done
+    je ata_identify.serial
 
     lodsw
     mov [edi], ah
@@ -137,7 +131,26 @@ ata_identify.label_loop:
     inc ecx
     add edi, 2
     jmp ata_identify.label_loop
+ata_identify.serial:
+    mov esi, ata_identify_buffer + 20
+    mov edi, ata_drive_sn
+    xor ecx, ecx
+ata_identify.serial_loop:
+    cmp ecx, 10
+    je ata_identify.done
+
+    lodsw
+    mov [edi], ah
+    mov [edi + 1], al
+
+    inc ecx
+    add edi, 2
+    jmp ata_identify.serial_loop
 ata_identify.done:
+    ; sector count
+    mov eax, [ata_identify_buffer + 120]
+    mov [ata_disk_size], eax
+    
     xor al, al
     ret
 ata_identify.no_drives:
@@ -235,28 +248,6 @@ ata_install:
     jnz .error
 
     serial_println "ata_install: initialized ATA driver"
-
-    mov esi, ata_drive_label
-    call vga_puts
-    vga_print 0x0A
-
-    mov ecx, 2
-    mov esi, 1
-    mov edi, ata_identify_buffer
-    call ata_read
-
-    mov esi, ata_identify_buffer
-    xor ecx, ecx
-ata_install.loop:
-    cmp ecx, 512 * 2
-    jge ata_install.done
-
-    lodsb
-    out 0xe9, al
-
-    inc ecx
-    jmp ata_install.loop
-ata_install.done:
     ret
 ata_install.error:
     xor ebx, ebx
@@ -286,8 +277,10 @@ ata_status:
 ata_error:
     resb 3
 ata_drive_label:
-    resb 40
+    resb 41
+ata_drive_sn:
+    resb 21
 ata_disk_size:
     resb 4
 ata_identify_buffer:
-    resb 512 * 2
+    resb 512

@@ -57,15 +57,7 @@ kmain.nodebug:
     call kbd_install
     call pmm_install
 
-    ;mov ecx, 0
-    ;mov edx, pit_handler
-    ;call irq_register
-
     jmp shell_entry
-
-;pit_handler:
-;    vga_println "PIT!"
-;    ret
 
 section .data
 
