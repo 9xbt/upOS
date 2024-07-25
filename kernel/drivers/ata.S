@@ -116,12 +116,12 @@ ata_identify.send_ident:
 
     mov ecx, 1
     xor esi, esi
-    mov edi, ata_temp_buffer
+    mov edi, ata_identify_buffer
     call ata_read
     cmp al, 0
     jnz ata_identify.disk_error
 
-    mov esi, ata_temp_buffer
+    mov esi, ata_identify_buffer
     add esi, 54
     mov edi, ata_drive_label
     xor ecx, ecx
@@ -241,10 +241,10 @@ ata_install:
 
     mov ecx, 2
     mov esi, 1
-    mov edi, ata_temp_buffer
+    mov edi, ata_identify_buffer
     call ata_read
 
-    mov esi, ata_temp_buffer
+    mov esi, ata_identify_buffer
     xor ecx, ecx
 ata_install.loop:
     cmp ecx, 512 * 2
@@ -277,8 +277,6 @@ ata_base:
     dw 0x0000
 ata_type:
     db 0x00
-ata_drive_label:
-    times 40 db 0x00
 
 section .bss
 
@@ -286,5 +284,9 @@ ata_status:
     resb 1
 ata_error:
     resb 3
-ata_temp_buffer:
+ata_drive_label:
+    resb 40
+ata_disk_size:
+    resb 4
+ata_identify_buffer:
     resb 512 * 2
