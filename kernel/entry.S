@@ -53,11 +53,19 @@ kmain.qemudebug:
 kmain.nodebug:
     call idt_install
     call pic_install
-    call ata_install
+    ;call ata_install
     call kbd_install
-    call pmm_install
-kmain.loop:
+    ;call pmm_install
+
+    ;mov ecx, 0
+    ;mov edx, pit_handler
+    ;call irq_register
+
     jmp shell_entry
+
+pit_handler:
+    vga_println "PIT!"
+    ret
 
 section .data
 

@@ -203,6 +203,8 @@ ata_read.loop:
     je ata_read.done
 
     call ata_poll
+    cmp al, 0
+    jz ata_read.error
 
     mov dx, ATA_PRIMARY
     in ax, dx
@@ -210,12 +212,12 @@ ata_read.loop:
     stosw
 
     dec ecx
-
     jmp ata_read.loop
 ata_read.done:
     call ata_400ns
 
     xor al, al
+ata_read.error:
     ret
 
 ; ata_install - initializes the ATA driver
@@ -233,23 +235,6 @@ ata_install:
     call vga_puts
     vga_print 0x0A
 
-    mov ecx, 3
-    mov esi, 0
-    mov edi, ata_temp_buffer
-    call ata_read
-
-    mov esi, ata_temp_buffer
-    xor ecx, ecx
-ata_install.loop:
-    cmp ecx, 512 * 3
-    jge ata_install.done
-
-    lodsb
-    out 0xe9, al
-
-    inc ecx
-    jmp ata_install.loop
-ata_install.done:
     ret
 ata_install.error:
     xor ebx, ebx
@@ -281,4 +266,4 @@ ata_status:
 ata_error:
     resb 3
 ata_temp_buffer:
-    resb 512 * 3
+    resb 512

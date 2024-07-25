@@ -43,12 +43,12 @@ irq_register:
 ;   ebx: offset
 idt_set_entry:
     mov edx, [ebx]
-    mov word [eax], dx
-    mov word [eax + 2], 0x08
-    mov byte [eax + 4], 0x00
-    mov byte [eax + 5], 0x8E
+    mov word [eax], dx          ; Offset (low 16 bits)
+    mov word [eax + 2], 0x08    ; Selector
+    mov byte [eax + 4], 0x00    ; Reserved, must be 0
+    mov byte [eax + 5], 0x8E    ; Type
     shr edx, 16
-    mov word [eax + 6], dx
+    mov word [eax + 6], dx      ; Offset (high 16 bits)
     ret
 
 ; isr_handler - handles an interrupt service routine 
@@ -130,38 +130,11 @@ exception_31: db "reserved", 0
 exception_32: db "reserved", 0
 
 exceptions:
-    dd exception_1
-    dd exception_2
-    dd exception_3
-    dd exception_4
-    dd exception_5
-    dd exception_6
-    dd exception_7
-    dd exception_8
-    dd exception_9
-    dd exception_10
-    dd exception_11
-    dd exception_12
-    dd exception_13
-    dd exception_14
-    dd exception_15
-    dd exception_16
-    dd exception_17
-    dd exception_18
-    dd exception_19
-    dd exception_20
-    dd exception_21
-    dd exception_22
-    dd exception_23
-    dd exception_24
-    dd exception_25
-    dd exception_26
-    dd exception_27
-    dd exception_28
-    dd exception_29
-    dd exception_30
-    dd exception_31
-    dd exception_32
+    %assign i 1
+    %rep 32
+        dd exception_%+i
+        %assign i i+1
+    %endrep
 
 section .data
 
@@ -212,7 +185,6 @@ isrs:
         popad
         add esp, 8
 
-    int_stub%+%1_retire:
         iret
     %endmacro
 
