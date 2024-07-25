@@ -94,8 +94,39 @@ reboot_cmd.handler:
 
 cpuid_cmd.handler:
     call cpu_get_vendor
+    mov edi, cpuid_cmd.intel
+    call cmp_string
+    jc cpuid_cmd.handler.is_intel
+cpuid_cmd.handler.is_amd:
+    vga_print `              *@@@@@@@@@@@@@@@      `
+    call cpu_get_vendor
     call vga_puts
-    vga_print 0x0A
+    vga_print `\n                 @@@@@@@@@@@@@      `
+    call cpu_get_model
+    call vga_puts
+    vga_println `\n               @%       @@@@@    `
+    vga_println `              @@@%       @@@@@    `
+    vga_println `             @@@@&       @@@@@    `
+    vga_println `             @@@@@@@@@     @@@    `
+    vga_println `             #######              `
+    vga_println `\n            @@     @\\ /@  @@@@*   `
+    vga_println `           @..@    @ @ @  @.   @  `
+    vga_println `          @    @   @   @  @@@@*   `
+    
+    jmp shell_loop
+cpuid_cmd.handler.is_intel:
+    vga_print `88                              88  `
+    call cpu_get_vendor
+    call vga_puts
+    vga_print `\n\"\"              ,d              88  `
+    call cpu_get_model
+    call vga_puts
+    vga_println `\n                88              88`
+    vga_println `88 8b,dPPYba, MM88MMM ,adPPYba, 88`
+    vga_println `88 88P'   \`\"8a  88   a8P_____88 88`
+    vga_println `88 88       88  88   8PP\"\"\"\"\"\"\" 88`
+    vga_println `88 88       88  88,  \"8b,   ,aa 88`
+    vga_println `88 88       88  \"Y888 \`\"Ybbd8\"' 88`
 
     jmp shell_loop
 
@@ -165,6 +196,9 @@ reboot_cmd:
     db "reboot", 0x00
 cpuid_cmd:
     db "cpuid", 0x00
+
+cpuid_cmd.intel:
+    db "GenuineIntel", 0
 
 section .data
 

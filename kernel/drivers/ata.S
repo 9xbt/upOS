@@ -23,6 +23,7 @@ section .text
 %define ATA_DISK_ERR        0x02
 
 [global ata_install]
+[global ata_read]
 
 ; ata_400ns - waits roughly 400ns
 ; outputs:
