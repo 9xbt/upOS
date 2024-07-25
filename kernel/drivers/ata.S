@@ -62,11 +62,13 @@ ata_poll.loop:
 
     mov al, [ata_status]
     and al, 0x08
-    jz ata_poll.error
+    jnz ata_poll.done
 
     mov al, [ata_status]
     and al, 0x01
     jnz ata_poll.error
+
+    jmp ata_poll.loop
 ata_poll.done:
     xor al, al
     ret
@@ -116,6 +118,8 @@ ata_identify.send_ident:
     xor esi, esi
     mov edi, ata_temp_buffer
     call ata_read
+    cmp al, 0
+    jnz ata_identify.disk_error
 
     mov esi, ata_temp_buffer
     add esi, 54
@@ -204,7 +208,7 @@ ata_read.loop:
 
     call ata_poll
     cmp al, 0
-    jz ata_read.error
+    jnz ata_read.error
 
     mov dx, ATA_PRIMARY
     in ax, dx
@@ -235,6 +239,23 @@ ata_install:
     call vga_puts
     vga_print 0x0A
 
+    mov ecx, 2
+    mov esi, 1
+    mov edi, ata_temp_buffer
+    call ata_read
+
+    mov esi, ata_temp_buffer
+    xor ecx, ecx
+ata_install.loop:
+    cmp ecx, 512 * 2
+    jge ata_install.done
+
+    lodsb
+    out 0xe9, al
+
+    inc ecx
+    jmp ata_install.loop
+ata_install.done:
     ret
 ata_install.error:
     xor ebx, ebx
@@ -266,4 +287,4 @@ ata_status:
 ata_error:
     resb 3
 ata_temp_buffer:
-    resb 512
+    resb 512 * 2
