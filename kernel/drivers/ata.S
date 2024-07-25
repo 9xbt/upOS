@@ -28,6 +28,8 @@ section .text
 ; outputs:
 ;   al = error code
 ata_400ns:
+    push cx
+
     xor cx, cx
     mov dx, [ata_base]
     add dx, 7
@@ -40,6 +42,7 @@ ata_400ns.loop:
     inc cx
     jmp ata_400ns.loop
 ata_400ns.done:
+    pop cx
     ret
 
 ; ata_poll - polls from ATA
@@ -194,12 +197,22 @@ ata_read:
     add dx, 2
     out dx, al
 
+    shl ecx, 8
+ata_read.loop:
+    cmp ecx, 0
+    je ata_read.done
+
     call ata_poll
 
     mov dx, ATA_PRIMARY
-    mov ecx, 256
-    rep insw
+    in ax, dx
 
+    stosw
+
+    dec ecx
+
+    jmp ata_read.loop
+ata_read.done:
     call ata_400ns
 
     xor al, al
@@ -220,7 +233,7 @@ ata_install:
     call vga_puts
     vga_print 0x0A
 
-    mov ecx, 1
+    mov ecx, 3
     mov esi, 0
     mov edi, ata_temp_buffer
     call ata_read
@@ -228,7 +241,7 @@ ata_install:
     mov esi, ata_temp_buffer
     xor ecx, ecx
 ata_install.loop:
-    cmp ecx, 512
+    cmp ecx, 512 * 3
     jge ata_install.done
 
     lodsb
@@ -268,4 +281,4 @@ ata_status:
 ata_error:
     resb 3
 ata_temp_buffer:
-    resb 512
+    resb 512 * 3

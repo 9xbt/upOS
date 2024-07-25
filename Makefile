@@ -11,7 +11,7 @@ KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
 # Flags
 ASFLAGS = -f elf32 -Wall -g -F dwarf
-QEMUFLAGS = -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw | xxd
+QEMUFLAGS = -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw -enable-kvm
 
 # Output image name
 IMAGE_NAME = upOS
@@ -19,7 +19,7 @@ IMAGE_NAME = upOS
 all: dirs boot kernel hdd
 
 run: all
-	qemu-system-i386 $(QEMUFLAGS)
+	qemu-system-i386 $(QEMUFLAGS) | xxd
 
 run-gtk: all
 	qemu-system-i386 $(QEMUFLAGS) -display gtk,zoom-to-fit=on
