@@ -95,9 +95,8 @@ reboot_cmd.handler:
 
 cpuid_cmd.handler:
     call cpu_get_vendor
-    mov edi, cpuid_cmd.intel
-    call cmp_string
-    jc cpuid_cmd.handler.is_intel
+    cmp byte [esi], 'G'
+    je cpuid_cmd.handler.is_intel
 cpuid_cmd.handler.is_amd:
     vga_print `              *@@@@@@@@@@@@@@@      `
     call cpu_get_vendor
@@ -220,9 +219,6 @@ cpuid_cmd:
     db "cpuid", 0x00
 ataid_cmd:
     db "ataid", 0x00
-
-cpuid_cmd.intel:
-    db "GenuineIntel", 0
 
 section .bss
 
