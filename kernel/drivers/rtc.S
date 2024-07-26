@@ -19,6 +19,7 @@ section .text
 %macro rtc_print 1
 call %1
 mov edi, time_buffer
+mov ecx, 2
 call int_to_str
 mov esi, edi
 call vga_puts
@@ -40,10 +41,13 @@ bcd_to_bin:
 ; int_to_str - converts an integer to a string
 ; arguments:
 ;   eax = the integer to be converted
+;   ecx = max string length
 ;   edi = pointer to the buffer where the string will be stored
 ; output:
 ;   edi = the converted string
 int_to_str:
+    push ecx
+
     mov ecx, 10             ; base 10 divisor
 
     ; check if the number is negative
@@ -65,16 +69,20 @@ int_to_str:
         inc edi             ; move to next position
         test eax, eax       ; check if quotient is 0
         jnz .convert_loop
-   
+
+    pop edx
+.more_digits:
     ; ensure at least two digits
     mov eax, edi
     sub eax, ebx            ; calculate the length of the string (excluding null terminator)
-    cmp eax, 2              ; compare the length with 2 (at least two digits including null terminator)
+    cmp eax, edx            ; compare the length with 2 (at least two digits including null terminator)
     jae .at_least_two
 
     ; if the length is less than 2, add leading zero
     mov byte [edi], '0'
     inc edi
+
+    jmp .more_digits
 
 .at_least_two:
     ; null-terminate the string
@@ -177,12 +185,12 @@ rtc_get_second:
 ; output:
 ;   the date and time printed on the terminal
 rtc_print_date:
+    rtc_print rtc_get_century
+    rtc_print rtc_get_year
+    vga_print "-"
     rtc_print rtc_get_month
     vga_print "-"
     rtc_print rtc_get_day
-    vga_print "-"
-    rtc_print rtc_get_century
-    rtc_print rtc_get_year
     vga_print " "
     rtc_print rtc_get_hour
     vga_print ":"

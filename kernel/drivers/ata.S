@@ -255,6 +255,7 @@ ata_install.error:
     mov eax, ebx
     
     mov edi, ata_error
+    xor ecx, ecx
     call int_to_str
 
     serial_print "ata_install: failed to initialize ATA driver: error "

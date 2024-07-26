@@ -3,6 +3,7 @@
 
 [extern vga_clear]
 [extern vga_puts]
+[extern vga_putnchars]
 [extern vga_putchar]
 [extern vga_scroll]
 [extern vga_enable_cursor]

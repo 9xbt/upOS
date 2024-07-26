@@ -11,12 +11,12 @@ KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
 # Flags
 ASFLAGS = -f elf32 -Wall -g -F dwarf
-QEMUFLAGS = -debugcon stdio -cdrom bin/upOS.iso -d int
+QEMUFLAGS = -debugcon stdio -cdrom bin/upOS.iso -drive file=bin/fat32.hdd,format=raw -boot d
 
 # Output image name
 IMAGE_NAME = upOS
 
-all: dirs boot kernel iso
+all: dirs boot kernel iso fs
 
 run: all
 	qemu-system-i386 $(QEMUFLAGS)
@@ -54,6 +54,10 @@ iso:
 	cp boot/grub.cfg iso_root/boot/grub/grub.cfg
 	grub-mkrescue -o bin/upOS.iso iso_root/
 	rm -rf iso_root/
+
+fs:
+	dd if=/dev/zero of=bin/fat32.hdd bs=1M count=64
+	mkfs.fat -F 32 bin/fat32.hdd
 
 clean:
 	rm -f $(BOOT_OBJS) $(KERNEL_OBJS)

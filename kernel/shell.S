@@ -143,11 +143,33 @@ ataid_cmd.handler:
     mov eax, [ata_disk_size]
     shr eax, 1
     mov edi, ataid_cmd.drive_size
+    xor ecx, ecx
     call int_to_str
 
     mov esi, ataid_cmd.drive_size
-    call vga_puts
-    vga_println "KB"
+    xor ecx, ecx
+ataid_cmd.handler.loop:
+    lodsb
+    or al, al
+    jz ataid_cmd.handler.done
+
+    inc ecx
+    jmp ataid_cmd.handler.loop
+ataid_cmd.handler.done:
+    mov esi, ataid_cmd.drive_size
+    sub ecx, 3
+    push ecx
+    call vga_putnchars
+
+    vga_print "."
+
+    mov esi, ataid_cmd.drive_size
+    pop ecx
+    add esi, ecx
+    mov ecx, 3
+    call vga_putnchars
+
+    vga_println "MB"
 
     jmp shell_loop
 
