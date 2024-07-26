@@ -11,7 +11,7 @@ KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
 # Flags
 ASFLAGS = -f elf32 -Wall -g -F dwarf
-QEMUFLAGS = -debugcon stdio -cdrom bin/upOS.iso
+QEMUFLAGS = -debugcon stdio -cdrom bin/upOS.iso -d int
 
 # Output image name
 IMAGE_NAME = upOS
@@ -53,6 +53,7 @@ iso:
 	cp bin/kernel.elf iso_root/boot/kernel.elf
 	cp boot/grub.cfg iso_root/boot/grub/grub.cfg
 	grub-mkrescue -o bin/upOS.iso iso_root/
+	rm -rf iso_root/
 
 clean:
 	rm -f $(BOOT_OBJS) $(KERNEL_OBJS)
