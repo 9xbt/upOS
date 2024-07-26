@@ -35,14 +35,11 @@ dirs:
 
 bin/boot/%.o: boot/%.S
 	mkdir -p "$$(dirname $@)"
-	$(AS) $(ASFLAGS) -o $@ $<
+	$(AS) $(ASFLAGS) -I boot/include -I kernel/include-o $@ $<
 
 bin/kernel/%.o: kernel/%.S
 	mkdir -p "$$(dirname $@)"
-	$(AS) $(ASFLAGS) -I kernel/include -o $@ $<
-
-boot: $(BOOT_OBJS)
-	$(LD) -m elf_i386 -Ttext 0x7C00 --oformat=binary $^ -o bin/boot.bin
+	$(AS) $(ASFLAGS) -I boot/include -I kernel/include -o $@ $<
 
 kernel: $(KERNEL_OBJS)
 	$(LD) -m elf_i386 -Tkernel/linker.ld $^ -o bin/kernel.elf

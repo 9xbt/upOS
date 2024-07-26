@@ -3,16 +3,15 @@
 section .text
 
 %include "vga.inc"
+%include "gdt.inc"
 %include "idt.inc"
 %include "pic.inc"
 %include "kbd.inc"
 %include "rtc.inc"
 %include "ata.inc"
+%include "pmm.inc"
 %include "shell.inc"
 %include "serial.inc"
-%include "pmm.inc"
-
-extern gdt_install
 
 section .multiboot
 
@@ -38,6 +37,12 @@ kmain:
     mov [mboot_magic], eax
     mov [mboot_header_ptr], ebx
 
+    cmp eax, 0x2BADB002
+    je kmain.goodmagic
+kmain.badmagic:
+    vga_print "Invalid boot header!", 0x0A, "Cannot continue"
+    jmp $
+kmain.goodmagic:
     call vga_clear
     call vga_enable_cursor
 

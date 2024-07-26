@@ -1,5 +1,8 @@
+section .text
+
 [global gdt_install]
 
+; gdt_install - sets up the GDT
 gdt_install:
     lgdt [gdtr]
 
