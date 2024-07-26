@@ -41,7 +41,7 @@ shell_loop:
     shell_cmp echo_cmd
     shell_cmp reboot_cmd
     shell_cmp cpuid_cmd
-    shell_cmp ataid_cmd
+    shell_cmp atainfo_cmd
 
     cmp byte [kbd_buffer], RUST_USER_BRAIN_SIZE
     jz shell_loop
@@ -76,7 +76,7 @@ clear_cmd.handler:
     jmp shell_loop
 
 help_cmd.handler:
-    vga_println "Available commands:", 0x0A, "about - Shows info about upOS", 0x0A, "credits - ASCII names of the people who created upOS", 0x0A, "date - Shows the date & time", 0x0A, "clear - Clears the screen.", 0x0A, "echo - Echos back the arguments (akin to the voices in your head)", 0x0A, "help - Shows this screen.", 0x0A, "cpuid - Displays CPU info", 0x0A, "ataid - Displays hard drive info (ATA)"
+    vga_println "Available commands:", 0x0A, "about - Shows info about upOS", 0x0A, "credits - ASCII names of the people who created upOS", 0x0A, "date - Shows the date & time", 0x0A, "clear - Clears the screen.", 0x0A, "echo - Echos back the arguments (akin to the voices in your head)", 0x0A, "help - Shows this screen.", 0x0A, "cpuid - Displays CPU info", 0x0A, "atainfo - Displays hard drive info (ATA)"
     jmp shell_loop
 
 echo_cmd.handler:
@@ -130,7 +130,7 @@ cpuid_cmd.handler.is_intel:
 
     jmp shell_loop
 
-ataid_cmd.handler:
+atainfo_cmd.handler:
     vga_print "Drive label: "
     mov esi, ata_drive_label
     call vga_puts
@@ -142,34 +142,34 @@ ataid_cmd.handler:
     vga_print 0x0A, "Drive size: "
     mov eax, [ata_disk_size]
     shr eax, 1
-    mov edi, ataid_cmd.drive_size
+    mov edi, atainfo_cmd.drive_size
     xor ecx, ecx
     call int_to_str
 
-    mov esi, ataid_cmd.drive_size
+    mov esi, atainfo_cmd.drive_size
     xor ecx, ecx
-ataid_cmd.handler.loop:
+atainfo_cmd.handler.loop:
     lodsb
     or al, al
-    jz ataid_cmd.handler.done
+    jz atainfo_cmd.handler.done
 
     inc ecx
-    jmp ataid_cmd.handler.loop
-ataid_cmd.handler.done:
-    mov esi, ataid_cmd.drive_size
+    jmp atainfo_cmd.handler.loop
+atainfo_cmd.handler.done:
+    mov esi, atainfo_cmd.drive_size
     sub ecx, 3
     push ecx
     call vga_putnchars
 
-    vga_print "."
+    vga_print ","
 
-    mov esi, ataid_cmd.drive_size
+    mov esi, atainfo_cmd.drive_size
     pop ecx
     add esi, ecx
     mov ecx, 3
     call vga_putnchars
 
-    vga_println "MB"
+    vga_println " KB"
 
     jmp shell_loop
 
@@ -239,8 +239,8 @@ reboot_cmd:
     db "reboot", 0x00
 cpuid_cmd:
     db "cpuid", 0x00
-ataid_cmd:
-    db "ataid", 0x00
+atainfo_cmd:
+    db "atainfo", 0x00
 
 section .bss
 
@@ -250,5 +250,5 @@ time_buffer:
 command_name:
     resb 10
 
-ataid_cmd.drive_size:
+atainfo_cmd.drive_size:
     resb 10
