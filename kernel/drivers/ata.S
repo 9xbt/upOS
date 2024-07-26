@@ -261,6 +261,7 @@ ata_install.error:
 
     mov esi, ata_error
     call serial_puts
+    serial_print 0x0A
     ret
 
 section .data

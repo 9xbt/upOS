@@ -7,15 +7,12 @@ section .text
 ; arguments:
 ;   esi: a pointer to the string
 serial_puts:
-    cmp dword [boot_header.flags], 0x00000001
-    jne .done
-serial_puts.loop:
     lodsb
     or al, al
     jz serial_puts.done
         
     out 0xe9, al
 
-    jmp serial_puts.loop
+    jmp serial_puts
 serial_puts.done:
     ret

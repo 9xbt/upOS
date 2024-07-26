@@ -2,11 +2,11 @@ ENTRY(_start)
 
 SECTIONS
 {
-    . = 0x10000;
+    . = 1M;
 
     .text BLOCK(4K) : ALIGN(4K)
     {
-        *(.text.prologue)
+        *(.multiboot)
         *(.text)
     }
 

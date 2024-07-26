@@ -11,18 +11,21 @@ KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
 # Flags
 ASFLAGS = -f elf32 -Wall -g -F dwarf
-QEMUFLAGS = -debugcon stdio -drive file=bin/$(IMAGE_NAME).hdd,format=raw
+QEMUFLAGS = -debugcon stdio -cdrom bin/upOS.iso
 
 # Output image name
 IMAGE_NAME = upOS
 
-all: dirs boot kernel hdd
+all: dirs boot kernel iso
 
 run: all
-	qemu-system-i386 $(QEMUFLAGS) -display sdl
+	qemu-system-i386 $(QEMUFLAGS)
 
 run-gtk: all
 	qemu-system-i386 $(QEMUFLAGS) -display gtk,zoom-to-fit=on
+
+run-sdl:
+	qemu-system-i386 $(QEMUFLAGS) -display sdl
 
 run-gdb: all
 	qemu-system-i386 $(QEMUFLAGS) -S -s
@@ -43,12 +46,13 @@ boot: $(BOOT_OBJS)
 
 kernel: $(KERNEL_OBJS)
 	$(LD) -m elf_i386 -Tkernel/linker.ld $^ -o bin/kernel.elf
-	objcopy -O binary bin/kernel.elf bin/kernel.bin
 
-hdd:
-	dd if=/dev/zero of=bin/$(IMAGE_NAME).hdd bs=512 count=2880
-	dd if=bin/boot.bin of=bin/$(IMAGE_NAME).hdd conv=notrunc bs=512 seek=0 count=3
-	dd if=bin/kernel.bin of=bin/$(IMAGE_NAME).hdd conv=notrunc bs=512 seek=3 count=2046
+iso:
+	grub-file --is-x86-multiboot bin/kernel.elf
+	mkdir -p iso_root/boot/grub/
+	cp bin/kernel.elf iso_root/boot/kernel.elf
+	cp boot/grub.cfg iso_root/boot/grub/grub.cfg
+	grub-mkrescue -o bin/upOS.iso iso_root/
 
 clean:
 	rm -f $(BOOT_OBJS) $(KERNEL_OBJS)
