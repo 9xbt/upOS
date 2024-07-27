@@ -29,55 +29,8 @@ pmm_install.loop:
 
     pushad
 
-    serial_print "Start Addr: "
-
     ; (mbd->mmap-addr + i)->addr
     mov eax, [esi + multiboot_header.mmap_addr + ecx + multiboot_mmap.addr_low]
-
-    mov edi, pmm_num_buf
-    call hex_to_str
-    mov esi, pmm_num_buf
-    call serial_puts
-
-    popad
-    pushad
-
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-    serial_print " | Length: "
-
-    ; (mbd->mmap-addr + i)->len
-    mov eax, [esi + multiboot_header.mmap_addr + ecx + multiboot_mmap.len_low]
-
-    mov edi, pmm_num_buf
-    call hex_to_str
-    mov esi, pmm_num_buf
-    call serial_puts
-
-    popad
-    pushad
-
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-    serial_print " | Size: "
-
-    ; (mbd->mmap-addr + i)->size
-    mov eax, [esi + multiboot_header.mmap_addr + ecx + multiboot_mmap.size]
-
-    mov edi, pmm_num_buf
-    call hex_to_str
-    mov esi, pmm_num_buf
-    call serial_puts
-
-    popad
-    pushad
-
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-    serial_print " | Type: "
-
-    ; (mbd->mmap-addr + i)->type
-    mov eax, [esi + multiboot_header.mmap_addr + ecx + multiboot_mmap.type]
 
     mov edi, pmm_num_buf
     call hex_to_str
