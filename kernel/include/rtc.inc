@@ -3,6 +3,7 @@
 
 [extern bcd_to_bin]
 [extern int_to_str]
+[extern hex_to_str]
 [extern rtc_get_century]
 [extern rtc_get_year]
 [extern rtc_get_month]

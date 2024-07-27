@@ -12,18 +12,19 @@ section .text
 %include "pmm.inc"
 %include "shell.inc"
 %include "serial.inc"
+%include "multiboot.inc"
 
 section .multiboot
 
 MAGIC equ 0x1BADB002
-FLAGS equ 0
+FLAGS equ 0x00000003
 CHECKSUM equ -(MAGIC + FLAGS)
-
-section .multiboot
 
 dd MAGIC
 dd FLAGS
 dd CHECKSUM
+
+section .text.prologue
 
 global _start
 _start:
@@ -35,7 +36,7 @@ kmain:
     mov esp, stack_top
 
     mov [mboot_magic], eax
-    mov [mboot_header_ptr], ebx
+    mov [mboot_header], ebx
 
     cmp eax, 0x2BADB002
     je kmain.goodmagic
@@ -63,8 +64,3 @@ align 16
 stack_bottom:
 resb 4096
 stack_top:
-
-mboot_magic:
-    resb 4
-mboot_header_ptr:
-    resb 4

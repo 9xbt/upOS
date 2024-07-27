@@ -104,14 +104,7 @@ cpuid_cmd.handler.is_amd:
     vga_print `\n                 @@@@@@@@@@@@@      `
     call cpu_get_model
     call vga_puts
-    vga_println `\n               @%       @@@@@    `
-    vga_println `              @@@%       @@@@@    `
-    vga_println `             @@@@&       @@@@@    `
-    vga_println `             @@@@@@@@@     @@@    `
-    vga_println `             #######              `
-    vga_println `\n            @@     @\\ /@  @@@@*   `
-    vga_println `           @..@    @ @ @  @.   @  `
-    vga_println `          @    @   @   @  @@@@*   `
+    vga_println `\n               @%       @@@@@    \n              @@@%       @@@@@    \n             @@@@&       @@@@@    \n             @@@@@@@@@     @@@    \n             #######              \n\n            @@     @\\ /@  @@@@*   \n           @..@    @ @ @  @.   @  \n          @    @   @   @  @@@@*   `
     
     jmp shell_loop
 cpuid_cmd.handler.is_intel:
@@ -121,12 +114,7 @@ cpuid_cmd.handler.is_intel:
     vga_print `\n\"\"              ,d              88  `
     call cpu_get_model
     call vga_puts
-    vga_println `\n                88              88`
-    vga_println `88 8b,dPPYba, MM88MMM ,adPPYba, 88`
-    vga_println `88 88P'   \`\"8a  88   a8P_____88 88`
-    vga_println `88 88       88  88   8PP\"\"\"\"\"\"\" 88`
-    vga_println `88 88       88  88,  \"8b,   ,aa 88`
-    vga_println `88 88       88  \"Y888 \`\"Ybbd8\"' 88`
+    vga_println `\n                88              88\n88 8b,dPPYba, MM88MMM ,adPPYba, 88\n88 88P'   \`\"8a  88   a8P_____88 88\n88 88       88  88   8PP\"\"\"\"\"\"\" 88\n88 88       88  88,  \"8b,   ,aa 88\n88 88       88  \"Y888 \`\"Ybbd8\"' 88`
 
     jmp shell_loop
 
@@ -207,8 +195,8 @@ command_name.get.loop:
     lodsb
     cmp al, ' '
     je  command_name.get.end
-    cmp al, 0
-    je  command_name.get.end
+    test al, al
+    jz  command_name.get.end
     stosb
     jmp command_name.get.loop
 command_name.get.end:

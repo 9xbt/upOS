@@ -7,6 +7,7 @@ section .text
 
 [global bcd_to_bin]
 [global int_to_str]
+[global hex_to_str]
 [global rtc_get_century]
 [global rtc_get_year]
 [global rtc_get_month]
@@ -104,6 +105,31 @@ int_to_str:
 
     .done: ret
 
+; hex_to_str - converts a hex unsigned integer to a string
+; arguments:
+;   eax = the number to be converted
+;   edi = pointer to the buffer where the string will be stored
+; output:
+;   edi = the converted string
+hex_to_str:
+    push eax             ; Save original value of eax
+    mov ecx, 8           ; We will process 8 hex digits
+    mov ebx, edi         ; Store buffer address in ebx
+
+convert_loop:
+    rol eax, 4           ; Rotate left to get the next hex digit in the lowest nibble
+    and al, 0x0F         ; Isolate the lowest nibble
+    movzx edx, al        ; Zero extend the nibble to 32 bits
+    mov al, [hex_digits + edx] ; Get ASCII character from lookup table
+    mov [ebx], al        ; Store the character in the buffer
+    inc ebx              ; Move to the next buffer position
+    loop convert_loop    ; Repeat for all 8 digits
+
+    mov byte [ebx], 0    ; Null-terminate the string
+    pop eax              ; Restore original value of eax
+    ret                  ; Return to caller
+
+
 ; rtc_get_century - gets the current century
 ; output:
 ;   eax = the current century
@@ -199,6 +225,10 @@ rtc_print_date:
     rtc_print rtc_get_second
     vga_print 0xA
     ret
+
+section .rodata
+
+hex_digits: db "0123456789ABCDEF"
 
 section .bss
 

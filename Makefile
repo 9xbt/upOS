@@ -11,7 +11,7 @@ KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
 # Flags
 ASFLAGS = -f elf32 -Wall -g -F dwarf
-QEMUFLAGS = -debugcon stdio -cdrom bin/upOS.iso -drive file=bin/fat32.hdd,format=raw -boot d
+QEMUFLAGS = -debugcon stdio -m 256M -cdrom bin/upOS.iso -drive file=bin/fat32.hdd,format=raw -boot d
 
 # Output image name
 IMAGE_NAME = upOS
@@ -30,18 +30,24 @@ run-sdl:
 run-gdb: all
 	qemu-system-i386 $(QEMUFLAGS) -S -s
 
+run-amd:
+	qemu-system-i386 $(QEMUFLAGS) -cpu phenom,model_id="Testing AMD processor (phenom)",vendor=AuthenticAMD
+
+run-intel:
+	qemu-system-i386 $(QEMUFLAGS) -cpu Snowridge,model_id="Testing Intel processor (Snowridge)",vendor=GenuineIntel
+
 dirs:
 	mkdir -p bin
 
 bin/boot/%.o: boot/%.S
 	mkdir -p "$$(dirname $@)"
-	$(AS) $(ASFLAGS) -I boot/include -I kernel/include-o $@ $<
+	$(AS) $(ASFLAGS) -I boot/include -I kernel/include -o $@ $<
 
 bin/kernel/%.o: kernel/%.S
 	mkdir -p "$$(dirname $@)"
 	$(AS) $(ASFLAGS) -I boot/include -I kernel/include -o $@ $<
 
-kernel: $(KERNEL_OBJS)
+kernel: $(BOOT_OBJS) $(KERNEL_OBJS)
 	$(LD) -m elf_i386 -Tkernel/linker.ld $^ -o bin/kernel.elf
 
 iso:
