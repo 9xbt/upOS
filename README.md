@@ -29,3 +29,6 @@ upOS is a 32-bit DOS written completely in assembly.
 - [ ] ATA driver
 - [ ] FAT32 filesystem
 - [ ] ELF execution
+
+# Screenshots
+![image](https://github.com/user-attachments/assets/4d11d3ed-d444-4e17-a06b-a17ef0e741ac)
