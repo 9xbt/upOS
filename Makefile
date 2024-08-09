@@ -24,16 +24,16 @@ run: all
 run-gtk: all
 	qemu-system-i386 $(QEMUFLAGS) -display gtk,zoom-to-fit=on
 
-run-sdl:
+run-sdl: all
 	qemu-system-i386 $(QEMUFLAGS) -display sdl
 
 run-gdb: all
 	qemu-system-i386 $(QEMUFLAGS) -S -s
 
-run-amd:
+run-amd: all
 	qemu-system-i386 $(QEMUFLAGS) -cpu phenom,model_id="Testing AMD processor (phenom)",vendor=AuthenticAMD
 
-run-intel:
+run-intel: all
 	qemu-system-i386 $(QEMUFLAGS) -cpu Snowridge,model_id="Testing Intel processor (Snowridge)",vendor=GenuineIntel
 
 dirs:
