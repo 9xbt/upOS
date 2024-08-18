@@ -9,26 +9,23 @@
 
 upOS is a 32-bit DOS written completely in assembly.
 
-## Features
-- Fully custom bootloader (with a TUI & options)
-- Both bootloader and kernel completely written in assembly
-- 32-bit (x86)
-- Fits entirely on a 1.44MB floppy disk
+## Rewrite plan
 
-## Roadmap
-- [X] GDT
-- [X] IDT
-- [X] PIC
-- [X] Serial driver (QEMU debugcon only for now)
-- [X] VGA driver
-- [X] RTC driver
-- [X] Keyboard driver
-- [X] Basic shell
-- [ ] PMM
-- [ ] Heap
-- [ ] ATA driver
-- [ ] FAT32 filesystem
-- [ ] ELF execution
+### Bootloader
 
-# Screenshots
-![image](https://github.com/user-attachments/assets/4d11d3ed-d444-4e17-a06b-a17ef0e741ac)
+This is going to be a multiboot compatible bootloader.
+
+#### Stage 1
+
+1. Set up segmentation
+2. Get into unreal mode
+3. Load the next phase using int 13h at address 10000h
+4. Jump to the next stage
+
+#### Stage 2
+
+1. Display a TUI with boot options
+2. Load kernel with int 13h (in unreal mode)
+3. Get into protected mode
+4. Set `eax` and `ebx` to multiboot stuff
+5. Jump to kernel
