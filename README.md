@@ -19,7 +19,7 @@ This is going to be a multiboot compatible bootloader.
 
 1. Set up segmentation
 2. Get into unreal mode
-3. Load the next phase using int 13h at address 10000h
+3. Load the next phase using interrupt 13h
 4. Jump to the next stage
 
 #### Stage 2

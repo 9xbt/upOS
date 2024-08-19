@@ -12,7 +12,10 @@ struc multiboot_header
     .cmdline: resd 1
     .mods_count: resd 1
     .mods_addr: resd 1
-    .syms: resd 4
+    .elf_num: resd 1
+    .elf_size: resd 1
+    .elf_addr: resd 1
+    .elf_shndx: resd 1
     .mmap_length: resd 1
     .mmap_addr: resd 1
     .drives_length: resd 1
