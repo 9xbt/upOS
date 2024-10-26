@@ -1,5 +1,6 @@
 [global vga_clear]
 [global vga_puts]
+[global vga_putnchars]
 [global vga_putchar]
 [global vga_scroll]
 [global vga_enable_cursor]
@@ -33,6 +34,22 @@ vga_puts:
 
     jmp vga_puts
 vga_puts.done:
+    ret
+
+; vga_putnchars - Prints n characters of a string to the VGA console
+; arguments:
+;   esi: pointer to the string
+;   ecx: number of characters to be printed
+vga_putnchars:
+    lodsb
+    test ecx, ecx
+    jz .done
+
+    call vga_putchar
+
+    dec ecx
+    jmp vga_putnchars
+vga_putnchars.done:
     ret
 
 ; vga_putchar - Prints a character to the VGA console
