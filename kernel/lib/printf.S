@@ -66,12 +66,23 @@ printf.fmt:
     
     cmp byte [esi], 'd'
     je printf.num
+    cmp byte [esi], 's'
+    je printf.str
 
     jmp printf.loop
 printf.num:
     add ebp, 4
     mov eax, [ebp]
     call parse_num
+
+    inc esi
+    jmp printf.loop
+printf.str:
+    add ebp, 4
+    push esi
+    mov esi, [ebp]
+    call vga_puts
+    pop esi
 
     inc esi
     jmp printf.loop

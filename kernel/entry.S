@@ -5,6 +5,7 @@ section .text
 %include "vga.inc"
 %include "gdt.inc"
 %include "idt.inc"
+%include "pic.inc"
 %include "printf.inc"
 %include "multiboot.inc"
 
@@ -45,8 +46,9 @@ kmain.goodmagic:
 
     call gdt_install
     call idt_install
+    call pic_install
 
-    print `Testing %d\n`, 123
+    print `Testing %d %s\n`, 123, `James`
 
     jmp $
 
