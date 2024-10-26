@@ -46,10 +46,7 @@ kmain.goodmagic:
     call gdt_install
     call idt_install
 
-    mov eax, 2048
-    call parse_num
-
-    vga_println "Done"
+    print `Testing %d\n`, 123
 
     jmp $
 

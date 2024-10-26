@@ -3,29 +3,24 @@ section .text
 %include "vga.inc"
 
 [global parse_num]
+[global printf]
 
 ; parse_num - parses a decimal number
 ; arguments:
 ;   eax - value
 parse_num:
     push eax
-
     mov ebx, 10
     xor edx, edx
     idiv ebx
     mov ecx, eax
-    ; (n) ecx = value / base;
-    ; (r) edx = value % base;
-
     pop eax
 
     cmp edx, 0
     jl parse_num.zero
-
 parse_num.check:
     cmp eax, 10
     jge parse_num.loop
-
 parse_num.print:
     mov al, dl
     add al, '0'
@@ -39,10 +34,46 @@ parse_num.zero:
     add edx, 10
     dec ecx
     jmp parse_num.check
-
 parse_num.loop:
     mov eax, ecx
-    pushad
+    push edx
     call parse_num
-    popad
+    pop edx
     jmp parse_num.print
+
+; printf - prints a formatted string
+; arguments:
+;   [esp+4] - fmt
+;   [esp+8] - args
+printf:
+    mov ebp, esp
+
+    add ebp, 4
+    mov esi, [ebp]
+printf.loop:
+    cmp byte [esi], 0
+    je printf.done
+    cmp byte [esi], "%"
+    je printf.fmt
+
+    mov al, byte [esi]
+    call vga_putchar
+
+    inc esi
+    jmp printf.loop
+printf.fmt:
+    inc esi
+    
+    cmp byte [esi], 'd'
+    je printf.num
+
+    jmp printf.loop
+printf.num:
+    add ebp, 4
+    mov eax, [ebp]
+    call parse_num
+
+    inc esi
+    jmp printf.loop
+printf.done:
+    ret
