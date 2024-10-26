@@ -4,14 +4,7 @@ section .text
 
 %include "vga.inc"
 %include "gdt.inc"
-%include "idt.inc"
-%include "pic.inc"
-%include "kbd.inc"
-%include "rtc.inc"
-%include "ata.inc"
-%include "pmm.inc"
-%include "shell.inc"
-%include "serial.inc"
+%include "printf.inc"
 %include "multiboot.inc"
 
 section .multiboot
@@ -39,24 +32,20 @@ kmain:
     mov [mboot_header], ebx
 
     cmp eax, 0x2BADB002
-    je kmain.goodmagic
-kmain.badmagic:
-    vga_print "Invalid boot header!", 0x0A, "Cannot continue"
-    jmp $
-kmain.goodmagic:
+    jne kmain.badmagic
+
     call vga_clear
     call vga_enable_cursor
 
     vga_println "Welcome to upOS v0.3 (build ", __DATE__, " ", __TIME__, ")!", 0x0A
 
     call gdt_install
-    call idt_install
-    call pic_install
-    call ata_install
-    call kbd_install
-    call pmm_install
 
-    jmp shell_entry
+    jmp $
+kmain.badmagic:
+    call vga_clear
+    vga_print "Invalid multiboot header!", 0x0A, "Cannot continue"
+    jmp $
 
 section .bss
 
