@@ -1,8 +1,6 @@
 section .text
 
 %include "vga.inc"
-%include "pic.inc"
-%include "serial.inc"
 
 [global idt_install]
 [global irq_register]
@@ -23,8 +21,6 @@ idt_install.loop:
     jmp idt_install.loop
 idt_install.end_loop:
     lidt [idtr]
-
-    serial_println "idt_install: initialized IDT"
     ret
 
 ; irq_register - registers an irq
@@ -89,7 +85,7 @@ irq_handler:
     call [eax]
 irq_handler.eoi:
     mov al, cl
-    call pic_eoi
+    ;call pic_eoi
 
     sub esp, 40
     ret

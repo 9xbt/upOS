@@ -5,13 +5,7 @@ section .text
 %include "vga.inc"
 %include "gdt.inc"
 %include "idt.inc"
-%include "pic.inc"
-%include "kbd.inc"
-%include "rtc.inc"
-%include "ata.inc"
-%include "pmm.inc"
-%include "shell.inc"
-%include "serial.inc"
+%include "printf.inc"
 %include "multiboot.inc"
 
 section .multiboot
@@ -51,12 +45,13 @@ kmain.goodmagic:
 
     call gdt_install
     call idt_install
-    call pic_install
-    call ata_install
-    call kbd_install
-    call pmm_install
 
-    jmp shell_entry
+    mov eax, 2048
+    call parse_num
+
+    vga_println "Done"
+
+    jmp $
 
 section .bss
 
