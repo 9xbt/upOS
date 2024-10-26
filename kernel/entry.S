@@ -27,6 +27,11 @@ _start:
 
 section .text
 
+timer_irq:
+    in al, 0x60
+    vga_print "Keyboard! "
+    ret
+
 kmain:
     mov esp, stack_top
 
@@ -47,6 +52,10 @@ kmain.goodmagic:
     call gdt_install
     call idt_install
     call pic_install
+
+    mov ecx, 1
+    mov edx, timer_irq
+    call irq_register
 
     print `Testing %d %s\n`, 123, `James`
 
