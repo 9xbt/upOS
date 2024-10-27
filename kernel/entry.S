@@ -6,6 +6,7 @@ section .text
 %include "gdt.inc"
 %include "idt.inc"
 %include "pic.inc"
+%include "pmm.inc"
 %include "printf.inc"
 %include "multiboot.inc"
 
@@ -27,11 +28,6 @@ _start:
 
 section .text
 
-timer_irq:
-    in al, 0x60
-    vga_print "Keyboard! "
-    ret
-
 kmain:
     mov esp, stack_top
 
@@ -52,12 +48,9 @@ kmain.goodmagic:
     call gdt_install
     call idt_install
     call pic_install
+    ;call pmm_install
 
-    mov ecx, 1
-    mov edx, timer_irq
-    call irq_register
-
-    print `Testing %d %s\n`, 123, `James`
+    print `Testing %x\n`, 24
 
     jmp $
 
