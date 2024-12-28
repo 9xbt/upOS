@@ -2,8 +2,45 @@ section .text
 
 %include "vga.inc"
 
+[global get_decimal_len]
 [global parse_num]
+[global parse_hex]
 [global printf]
+
+; get_decimal_len - returns the number of decimal digits in a number
+; arguments:
+;   eax - value
+; returns:
+;   ecx - number of digits
+get_decimal_len:
+    push eax
+    xor ecx, ecx
+get_decimal_len.loop:
+    mov ebx, 10
+    xor edx, edx
+    idiv ebx
+    inc ecx
+
+    test eax, eax
+    jg get_decimal_len.loop
+get_decimal_len.done:
+    pop eax
+    ret
+
+; print_padding - prints specified padding
+; arguments:
+;   al - padding character
+;   ebx - padding count
+print_padding:
+    pushad
+    call vga_putchar
+    popad
+
+    dec ecx
+    test ecx, ecx
+    jg print_padding
+print_padding.done:
+    ret
 
 ; parse_num - parses a decimal number
 ; arguments:

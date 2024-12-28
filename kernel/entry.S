@@ -48,9 +48,7 @@ kmain.goodmagic:
     call gdt_install
     call idt_install
     call pic_install
-    ;call pmm_install
-
-    print `Testing %x\n`, 24
+    call pmm_install
 
     jmp $
 

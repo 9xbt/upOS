@@ -11,7 +11,7 @@ KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
 # Flags
 ASFLAGS = -f elf32 -Wall -g -F dwarf
-QEMUFLAGS = -debugcon stdio -m 256M -cdrom bin/upOS.iso -drive file=bin/fat32.hdd,format=raw -boot d
+QEMUFLAGS = -debugcon stdio -m 256M -cdrom bin/upOS.iso -drive file=bin/fat32.hdd,format=raw -boot d -display gtk,show-menubar=off,show-tabs=on
 
 # Output image name
 IMAGE_NAME = upOS
@@ -21,20 +21,9 @@ all: dirs boot kernel iso fs
 run: all
 	qemu-system-i386 $(QEMUFLAGS)
 
-run-gtk: all
-	qemu-system-i386 $(QEMUFLAGS) -display gtk,zoom-to-fit=on
-
-run-sdl: all
-	qemu-system-i386 $(QEMUFLAGS) -display sdl
-
 run-gdb: all
-	qemu-system-i386 $(QEMUFLAGS) -S -s
-
-run-amd: all
-	qemu-system-i386 $(QEMUFLAGS) -cpu phenom,model_id="Testing AMD processor (phenom)",vendor=AuthenticAMD
-
-run-intel: all
-	qemu-system-i386 $(QEMUFLAGS) -cpu Snowridge,model_id="Testing Intel processor (Snowridge)",vendor=GenuineIntel
+	qemu-system-i386 $(QEMUFLAGS) -S -s & \
+	gdb bin/kernel.elf
 
 dirs:
 	mkdir -p bin

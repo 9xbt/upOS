@@ -1,7 +1,9 @@
 %ifndef __PRINTF_INC
 %define __PRINTF_INC
 
+[extern get_decimal_len]
 [extern parse_num]
+[extern parse_hex]
 [extern printf]
 
 %macro va_arg 1
