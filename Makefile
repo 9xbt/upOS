@@ -11,7 +11,7 @@ KERNEL_OBJS := $(addprefix bin/kernel/, $(KERNEL_SOURCES:.S=.o))
 
 # Flags
 ASFLAGS = -f elf32 -g -F dwarf
-QEMUFLAGS = -debugcon stdio -m 256M -cdrom bin/upOS.iso -drive file=bin/fat32.hdd,format=raw -boot d -display gtk,show-menubar=off,show-tabs=on
+QEMUFLAGS = -debugcon stdio -m 256M -cdrom bin/upOS.iso -drive file=bin/fat32.hdd,format=raw -boot d -display gtk,show-menubar=off
 
 # Output image name
 IMAGE_NAME = upOS

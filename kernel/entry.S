@@ -9,16 +9,24 @@ section .text
 %include "pmm.inc"
 %include "printf.inc"
 %include "multiboot.inc"
+%include "console.inc"
 
 section .multiboot
 
 MAGIC equ 0x1BADB002
-FLAGS equ 0x00000003
+FLAGS equ 0x00000006
 CHECKSUM equ -(MAGIC + FLAGS)
+WIDTH equ 1024
+HEIGHT equ 768
+DEPTH equ 32
 
 dd MAGIC
 dd FLAGS
 dd CHECKSUM
+dd 0, 0, 0, 0, 0, 0
+dd WIDTH
+dd HEIGHT
+dd DEPTH
 
 section .text.prologue
 
@@ -40,8 +48,9 @@ kmain.badmagic:
     vga_print "Invalid boot header!", 0x0A, "Cannot continue"
     jmp $
 kmain.goodmagic:
-    call vga_clear
-    call vga_enable_cursor
+    ;call vga_clear
+    ;call vga_enable_cursor
+    call console_init
 
     vga_println "Welcome to upOS v0.3 (build ", __DATE__, " ", __TIME__, ")!", 0x0A
 

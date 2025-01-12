@@ -67,7 +67,8 @@ pmm_install.scan_loop:
     mov [eax + multiboot_mmap.addr_low], ebx ; save the value
 
     xor ecx, ecx
-    jmp pmm_install.bitmap_loop
+    ;jmp pmm_install.bitmap_loop
+    jmp pmm_install.done
 pmm_install.mmap_used:
     add ecx, multiboot_mmap_size
     jmp pmm_install.scan_loop

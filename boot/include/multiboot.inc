@@ -26,6 +26,18 @@ struc multiboot_header
     .config_table: resd 1
     .boot_loader_name: resd 1
     .apm_table: resd 1
+    .vbe_control_info: resd 1
+    .vbe_mode_info: resd 1
+    .vbe_mode: resw 1
+    .vbe_interface_seg: resw 1
+    .vbe_interface_off: resw 1
+    .vbe_interface_len: resw 1
+    .framebuffer_addr: resq 1
+    .framebuffer_pitch: resd 1
+    .framebuffer_width: resd 1
+    .framebuffer_height: resd 1
+    .framebuffer_bpp: resb 1
+    .framebuffer_type: resb 1
 endstruc
 
 struc multiboot_mmap
