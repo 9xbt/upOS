@@ -17,14 +17,25 @@ console_init:
     mov edi, [ebx + multiboot_header.framebuffer_height]
     mov [console_height], edi
 
-    ;mov edi, [ebx + multiboot_header.framebuffer_addr]
-    ;mov ecx, 1024 * 768
-    ;mov eax, 0xff
-    ;rep stosd
+    mov esi, hello
+    call console_puts
 
-    mov al, 'A'
+    ret
+
+hello: db "Hello, world!", 0
+
+; console_puts - Prints a string to the framebuffer console
+; arguments:
+;   esi: a pointer to the string
+console_puts:
+    lodsb
+    or al, al
+    jz .done
+    
     call console_putchar
 
+    jmp console_puts
+console_puts.done:
     ret
 
 ; console_putchar - prints a character to the framebuffer console
@@ -39,26 +50,23 @@ console_putchar:
     lea edx, [edx * 8]
     shl edx, 2
     add edi, edx
-    
+   
     mov ecx, 0
 console_putchar.loop:
     push ecx
     mov ecx, 8
     call console_putchar.row_loop
     pop ecx
-    
+   
     add edi, [console_pitch]
     inc ecx
     cmp ecx, 15
     jl console_putchar.loop
-
     inc dword [console_x]
-
     mov ebx, [console_width]
     shr ebx, 3
     cmp dword [console_x], ebx
     jl console_putchar.scroll_check
-
     mov dword [console_x], 0
     inc dword [console_y]
 console_putchar.scroll_check:
@@ -73,15 +81,18 @@ console_putchar.row_loop:
     shl ebx, 4
     add ebx, [esp + 4]
     movzx ebx, byte [builtin_font + ebx]
-    
+   
     mov edx, 0
 console_putchar.bit_loop:
     bt ebx, edx
     jnc console_putchar.skip_pixel
-    
+   
     push edx
+    mov edx, 7
+    sub edx, [esp]
     shl edx, 2
-    mov dword [edi + edx], 0xffffffff
+    mov ecx, [console_color]
+    mov dword [edi + edx], ecx
     pop edx
 console_putchar.skip_pixel:
     inc edx
@@ -101,6 +112,7 @@ section .data
 
 console_x: dd 0
 console_y: dd 0
+console_color: dd 0xffffffff
 
 section .bss
 
