@@ -10,6 +10,8 @@ section .text
 console_init:
     mov edi, [ebx + multiboot_header.framebuffer_addr]
     mov [console_fb_addr], edi
+    mov edi, [ebx + multiboot_header.framebuffer_pitch]
+    mov [console_pitch], edi
     mov edi, [ebx + multiboot_header.framebuffer_width]
     mov [console_width], edi
     mov edi, [ebx + multiboot_header.framebuffer_height]
@@ -25,56 +27,70 @@ console_init:
 
     ret
 
+; console_putchar - prints a character to the framebuffer console
+; arguments:
+;   al - character to print
 console_putchar:
     mov edi, [console_fb_addr]
-
-    xor ecx, ecx
-console_putchar.row:
-    cmp ecx, 16
-    jge console_putchar.done
-
-    mov ebx, ecx
-    mov esi, ecx
-
-    push ecx
-    call console_putchar.column
-    pop ecx
-
-    inc ecx
-    jmp console_putchar.row
-console_putchar.column:
-    cmp ecx, 8
-    jge console_putchar.done
-
-    ; c * 16 + i
-    ;add bl, al
-    ;shl bl, 4
-    ;mov ebx, [builtin_font + ebx]
-
-    ; & (1 << (7 - o))
-    ;mov edx, 7
-    ;sub edx, ecx
-    ;shl edx, 1
-    
-    ;and ebx, edx
-
-    ;cmp ebx, 0 ; TODO: test ebx, ebx ?
-    jmp console_putchar.point
-console_putchar.column.continue:
-    inc ecx
-    jmp console_putchar.column
-console_putchar.point:
-    mov edx, esi   ; i
-    ;add ecx, 0     ; y
-    ;imul edx, 1024 ; (y + i) * 1024
-    ;add edx, 0     ; x
-    ;add edx, ecx
-
+    mov edx, [console_y]
+    shl edx, 12
     add edi, edx
-    mov dword [edi], 0xffffffff
+    mov edx, [console_x]
+    lea edx, [edx * 8]
+    shl edx, 2
+    add edi, edx
+    
+    mov ecx, 0
+console_putchar.loop:
+    push ecx
+    mov ecx, 8
+    call console_putchar.row_loop
+    pop ecx
+    
+    add edi, [console_pitch]
+    inc ecx
+    cmp ecx, 15
+    jl console_putchar.loop
 
-    jmp console_putchar.column.continue
-console_putchar.done:
+    inc dword [console_x]
+
+    mov ebx, [console_width]
+    shr ebx, 3
+    cmp dword [console_x], ebx
+    jl console_putchar.scroll_check
+
+    mov dword [console_x], 0
+    inc dword [console_y]
+console_putchar.scroll_check:
+    mov ebx, [console_height]
+    shr ebx, 4
+    cmp dword [console_y], ebx
+    jl console_scroll
+    ret
+console_putchar.row_loop:
+    xor ebx, ebx
+    mov bl, al
+    shl ebx, 4
+    add ebx, [esp + 4]
+    movzx ebx, byte [builtin_font + ebx]
+    
+    mov edx, 0
+console_putchar.bit_loop:
+    bt ebx, edx
+    jnc console_putchar.skip_pixel
+    
+    push edx
+    shl edx, 2
+    mov dword [edi + edx], 0xffffffff
+    pop edx
+console_putchar.skip_pixel:
+    inc edx
+    cmp edx, 8
+    jl console_putchar.bit_loop
+    ret
+
+; console_scroll - scrolls the console up
+console_scroll:
     ret
 
 section .rodata
@@ -89,5 +105,6 @@ console_y: dd 0
 section .bss
 
 console_width: resd 1
+console_pitch: resd 1
 console_height: resd 1
 console_fb_addr: resd 1

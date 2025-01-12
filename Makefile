@@ -23,7 +23,7 @@ run: all
 
 run-gdb: all
 	qemu-system-i386 $(QEMUFLAGS) -S -s & \
-	gdb bin/kernel.elf
+	gdb bin/kernel.elf -ex "target remote :1234"
 
 dirs:
 	mkdir -p bin
